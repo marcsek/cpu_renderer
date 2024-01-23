@@ -1,3 +1,6 @@
 [submodule "dependencies/minifb"]
 	path = dependencies/minifb
 	url = https://github.com/emoon/minifb.git
+[submodule "dependencies/notstd"]
+	path = dependencies/notstd
+	url = https://github.com/marcsek/notstd.git

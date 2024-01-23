@@ -1,5 +1,6 @@
 #include "diagnostics.h"
 #include <MiniFB.h>
+#include <notstd.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -13,6 +14,7 @@ void clear_output() {
 
 void diag_print_info(struct mfb_timer *tmr) {
   clear_output();
+  hash_table *ht = hash_table_create(1024, NULL, NULL);
 
   double delta = mfb_timer_delta(tmr);
   double frame_time = delta * 1000;

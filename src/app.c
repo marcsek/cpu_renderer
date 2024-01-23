@@ -11,7 +11,7 @@ static struct mfb_window *window;
 static renderer *rn;
 float pos_x = 0;
 
-void app_tick();
+void app_tick(double dt);
 void app_update();
 void update_tick(struct mfb_timer *tmr, double *total_time);
 
@@ -35,10 +35,11 @@ void app_mainloop() {
 
   do {
     int state;
+    double dt = mfb_timer_delta(tick_timer);
 
     mfb_timer_now(timer);
 
-    update_tick(tick_timer, &total_tick_time);
+    app_tick(dt);
     app_update();
 
     uint32_t *window_buffer = renderer_get_buffer(rn);
@@ -56,26 +57,9 @@ void app_mainloop() {
   diag_exit();
 }
 
-void app_tick() {}
+void app_tick(double dt) { pos_x += 100 * dt; }
 
 void app_update() {
   renderer_reset_buffer(rn);
-  renderer_put_pixel(rn, MIN(MAX(0, pos_x), WINDOW_WIDTH), 300, 0xFFFF0000);
-}
-
-// Parameter "cp" adjusts the prediction of how "short" is total time going to
-// be against, what it should actually be based on TARGET_FPS
-const double target_time = 1.0f / TARGET_TICK_RATE;
-const float cp = 1.90f;
-const float correction = MAX(target_time - (1.0f / TARGET_FPS) * cp, 0);
-
-void update_tick(struct mfb_timer *tmr, double *total_time) {
-  double delta = mfb_timer_delta(tmr);
-  *total_time += delta;
-
-  if (*total_time + correction >= target_time) {
-    app_tick();
-    pos_x += 1;
-    *total_time = 0;
-  }
+  renderer_put_pixel(rn, MIN(MAX(0, pos_x), WINDOW_WIDTH - 1), 300, 0xFFFF0000);
 }
