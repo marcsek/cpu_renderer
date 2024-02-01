@@ -5,12 +5,12 @@
 
 typedef struct {
   vec2 pos;
-  vec *model;
+  vector *model;
   float scale;
 } entity;
 
-entity entity_create(vec *model);
+entity entity_create(vector *model);
 void entity_translate_by(entity *en, vec2 v);
-vec *entity_get_polyline(entity *en);
+vector *entity_get_polyline(entity *en);
 
 #endif

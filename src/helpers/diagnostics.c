@@ -1,5 +1,5 @@
 #include "diagnostics.h"
-#include "vec.h"
+#include "vector.h"
 #include <MiniFB.h>
 #include <notstd.h>
 #include <stdio.h>
@@ -21,13 +21,13 @@ typedef struct _diag_listener {
   void *value;
 } diag_listener;
 
-static vec *listeners = NULL;
+static vector *listeners = NULL;
 static struct mfb_timer *timer = NULL;
 static double since_last_print = 1.0f / MAX_PRINT_INTERVAL;
 
 void init() {
   if (listeners == NULL) {
-    listeners = vec_create(DIAG_MAX_LISTENER_COUNT);
+    listeners = vector_create(DIAG_MAX_LISTENER_COUNT);
   }
 
   if (timer == NULL)
@@ -40,7 +40,7 @@ void diag_listener_add(const char *key, const char *desc, void *value) {
 
   lst->desc = desc;
   lst->value = value;
-  vec_push_back(listeners, lst);
+  vector_push_back(listeners, lst);
 }
 
 void diag_print_info() {
@@ -53,8 +53,8 @@ void diag_print_info() {
 
   printf("-i- DIAGNOSTICS -i-\n\n");
 
-  diag_listener **data = (diag_listener **)vec_get_data(listeners);
-  for (size_t i = 0; i < vec_get_size(listeners); i++) {
+  diag_listener **data = (diag_listener **)vector_get_data(listeners);
+  for (size_t i = 0; i < vector_get_size(listeners); i++) {
     double d = *((double *)data[i]->value);
     printf(data[i]->desc, d);
   }
@@ -63,5 +63,5 @@ void diag_print_info() {
 void diag_exit() {
   printf("\n-!- Window disconnected -!-\n");
   // Este treba cleanup
-  vec_destroy(listeners);
+  vector_destroy(listeners);
 }

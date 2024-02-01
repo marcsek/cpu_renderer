@@ -9,6 +9,6 @@ typedef struct {
 
 coordinate_transformer coor_tranformer_create(renderer *rn);
 void coor_transformer_create_closed_polyline(coordinate_transformer *ct,
-                                             vec *verts, uint32_t v);
+                                             vector *verts, uint32_t v);
 
 #endif

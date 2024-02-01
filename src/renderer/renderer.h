@@ -19,6 +19,6 @@ uint32_t *renderer_destroy(renderer *rn);
 
 void renderer_create_line(renderer *rn, int x1, int y1, int x2, int y2,
                           uint32_t v);
-void renderer_create_closed_polyline(renderer *rn, vec *verts, uint32_t v);
+void renderer_create_closed_polyline(renderer *rn, vector *verts, uint32_t v);
 
 #endif

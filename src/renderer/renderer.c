@@ -1,6 +1,4 @@
 #include "renderer.h"
-#include "../shapes/shapes.h"
-#include "vec.h"
 #include <assert.h>
 #include <math.h>
 #include <stdint.h>
@@ -96,9 +94,9 @@ void renderer_create_line(renderer *rn, int x1, int y1, int x2, int y2,
   }
 }
 
-void renderer_create_closed_polyline(renderer *rn, vec *verts, uint32_t v) {
-  vec2 **data = (vec2 **)vec_get_data(verts);
-  size_t verts_len = vec_get_size(verts);
+void renderer_create_closed_polyline(renderer *rn, vector *verts, uint32_t v) {
+  vec2 **data = (vec2 **)vector_get_data(verts);
+  size_t verts_len = vector_get_size(verts);
   vec2 *v1 = NULL;
   vec2 *v2 = NULL;
 
