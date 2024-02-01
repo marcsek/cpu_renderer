@@ -14,7 +14,7 @@ void entity_translate_by(entity *en, vec2 v) {
 }
 
 vector *entity_get_polyline(entity *en) {
-  vector *new = vector_create(vector_get_size(en->model));
+  vector *new = vector_create_cf(vector_get_size(en->model), free);
   vec2 **data = (vec2 **)vector_get_data(en->model);
 
   for (size_t i = 0; i < vector_get_size(en->model); i++) {
@@ -27,3 +27,5 @@ vector *entity_get_polyline(entity *en) {
 
   return new;
 }
+
+void _vector_free_func() {}

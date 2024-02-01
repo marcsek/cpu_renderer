@@ -12,5 +12,6 @@ typedef struct {
 entity entity_create(vector *model);
 void entity_translate_by(entity *en, vec2 v);
 vector *entity_get_polyline(entity *en);
+void entity_destroy_polyline(entity *en);
 
 #endif

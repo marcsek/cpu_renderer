@@ -2,6 +2,7 @@
 #include "coor_transformer.h"
 #include "entity.h"
 #include "shapes/shapes.h"
+#include "vector.h"
 #include <notstd.h>
 
 int pos_x = 0;
@@ -18,6 +19,7 @@ void world_update() {
 }
 
 void world_render(coordinate_transformer *ct) {
-  coor_transformer_create_closed_polyline(ct, entity_get_polyline(&star),
-                                          0xFFFF0000);
+  vector *polyline = entity_get_polyline(&star);
+  coor_transformer_create_closed_polyline(ct, polyline, 0xFFFF0000);
+  vector_destroy(polyline);
 }
