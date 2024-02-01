@@ -1,6 +1,9 @@
 #include "app.h"
+#include "coor_transformer.h"
 #include "helpers/diagnostics.h"
 #include "renderer/renderer.h"
+#include "shapes/shapes.h"
+#include "vec.h"
 #include <MiniFB.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -9,11 +12,18 @@
 
 static struct mfb_window *window;
 static renderer *rn;
-float pos_x = 0;
+int pos_x = 0;
+int pos_y = 0;
+vec *star = NULL;
+coordinate_transformer ct = {0};
 
 void app_tick(double dt);
 void app_update();
-void update_tick(struct mfb_timer *tmr, double *total_time);
+
+void mouse_move_callback(struct mfb_window *w, int x, int y) {
+  pos_x = x;
+  pos_y = y;
+}
 
 int app_init() {
   window = mfb_open_ex(WINDOW_NAME, WINDOW_WIDTH, WINDOW_HEIGHT, WF_RESIZABLE);
@@ -23,8 +33,12 @@ int app_init() {
 
   rn = renderer_create(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-  mfb_set_target_fps(TARGET_FPS);
+  star = shapes_star_make(150.0f, 75.0f, 5);
 
+  ct = (coordinate_transformer){rn};
+
+  mfb_set_target_fps(TARGET_FPS);
+  mfb_set_mouse_move_callback(window, mouse_move_callback);
   return 0;
 }
 
@@ -32,6 +46,12 @@ void app_mainloop() {
   struct mfb_timer *timer = mfb_timer_create();
   struct mfb_timer *tick_timer = mfb_timer_create();
   double total_tick_time = 0.0f;
+  double delta = 1.0f;
+  double frame_time = delta * 1000;
+  double fps = 1.0f / delta;
+  diag_listener_add("frame_time", " Frame time: %.3f ms\n", &frame_time);
+  diag_listener_add("fps", " FPS: %.0f\n", &fps);
+  diag_listener_add("x", " x: %d\n", &pos_x);
 
   do {
     int state;
@@ -50,16 +70,21 @@ void app_mainloop() {
       break;
     }
 
-    diag_print_info(timer);
+    delta = mfb_timer_delta(timer);
+    frame_time = delta * 1000;
+    fps = 1.0f / delta;
+
+    diag_print_info();
 
   } while (mfb_wait_sync(window));
 
   diag_exit();
 }
 
-void app_tick(double dt) { pos_x += 100 * dt; }
+void app_tick(double dt) {}
 
 void app_update() {
   renderer_reset_buffer(rn);
-  renderer_put_pixel(rn, MIN(MAX(0, pos_x), WINDOW_WIDTH - 1), 300, 0xFFFF0000);
+  coor_transformer_create_closed_polyline(&ct, star, 0xFFFF0000);
+  // renderer_create_line(rn, 300, 400, pos_x, pos_y);
 }
