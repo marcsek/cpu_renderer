@@ -11,17 +11,18 @@
 
 static uint32_t *base_buffer = NULL;
 
-renderer *renderer_create(size_t buffer_width, size_t buffer_height) {
+renderer renderer_create(size_t buffer_width, size_t buffer_height) {
   size_t buffer_length = buffer_width * buffer_height;
 
   uint32_t *buffer = (uint32_t *)calloc(buffer_length, sizeof(uint32_t));
   base_buffer = (uint32_t *)calloc(buffer_length, sizeof(uint32_t));
 
-  renderer *rn = malloc(sizeof(renderer));
-  rn->_buffer = buffer;
-  rn->buffer_width = buffer_width;
-  rn->buffer_height = buffer_height;
-  rn->buffer_size = buffer_length * sizeof(uint32_t);
+  renderer rn = (renderer){
+      ._buffer = buffer,
+      .buffer_width = buffer_width,
+      .buffer_height = buffer_height,
+      .buffer_size = buffer_length *= sizeof(uint32_t),
+  };
   return rn;
 }
 
@@ -47,7 +48,8 @@ uint32_t *renderer_destroy(renderer *rn) {
   return buffer;
 }
 
-void renderer_create_line(renderer *rn, int x1, int y1, int x2, int y2) {
+void renderer_create_line(renderer *rn, int x1, int y1, int x2, int y2,
+                          uint32_t v) {
   float m = 0.0f;
   if (x1 != x2) {
     m = (float)(y2 - y1) / (x2 - x1);
@@ -69,7 +71,7 @@ void renderer_create_line(renderer *rn, int x1, int y1, int x2, int y2) {
       int y = (int)(m * x + b);
 
       if (y >= 0 && y < rn->buffer_height && x >= 0 && x < rn->buffer_width) {
-        renderer_put_pixel(rn, x, y, 0xFFFFFFFF);
+        renderer_put_pixel(rn, x, y, v);
       }
     }
   } else {
@@ -88,7 +90,7 @@ void renderer_create_line(renderer *rn, int x1, int y1, int x2, int y2) {
     for (int y = y1; y < y2; y++) {
       int x = (int)(w * y + p);
       if (y >= 0 && y < rn->buffer_height && x >= 0 && x < rn->buffer_width) {
-        renderer_put_pixel(rn, x, y, 0xFFFFFFFF);
+        renderer_put_pixel(rn, x, y, v);
       }
     }
   }
@@ -108,9 +110,9 @@ void renderer_create_closed_polyline(renderer *rn, vec *verts, uint32_t v) {
     v1 = data[i];
     v2 = data[i + 1];
 
-    renderer_create_line(rn, (int)v1->x, (int)v1->y, (int)v2->x, (int)v2->y);
+    renderer_create_line(rn, (int)v1->x, (int)v1->y, (int)v2->x, (int)v2->y, v);
   }
   v1 = data[verts_len - 1];
   v2 = data[0];
-  renderer_create_line(rn, (int)v1->x, (int)v1->y, (int)v2->x, (int)v2->y);
+  renderer_create_line(rn, (int)v1->x, (int)v1->y, (int)v2->x, (int)v2->y, v);
 }

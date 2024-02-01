@@ -2,8 +2,7 @@
 #include "coor_transformer.h"
 #include "helpers/diagnostics.h"
 #include "renderer/renderer.h"
-#include "shapes/shapes.h"
-#include "vec.h"
+#include "world.h"
 #include <MiniFB.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -11,19 +10,17 @@
 #include <sys/param.h>
 
 static struct mfb_window *window;
-static renderer *rn;
-int pos_x = 0;
-int pos_y = 0;
-vec *star = NULL;
-coordinate_transformer ct = {0};
+static renderer rn;
+static world wrld;
+static coordinate_transformer ct;
 
 void app_tick(double dt);
 void app_update();
 
-void mouse_move_callback(struct mfb_window *w, int x, int y) {
-  pos_x = x;
-  pos_y = y;
-}
+// void mouse_move_callback(struct mfb_window *w, int x, int y) {
+//   pos_x = x;
+//   pos_y = y;
+// }
 
 int app_init() {
   window = mfb_open_ex(WINDOW_NAME, WINDOW_WIDTH, WINDOW_HEIGHT, WF_RESIZABLE);
@@ -33,12 +30,13 @@ int app_init() {
 
   rn = renderer_create(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-  star = shapes_star_make(150.0f, 75.0f, 5);
-
-  ct = (coordinate_transformer){rn};
+  ct = coor_tranformer_create(&rn);
 
   mfb_set_target_fps(TARGET_FPS);
-  mfb_set_mouse_move_callback(window, mouse_move_callback);
+
+  world_create();
+
+  // mfb_set_mouse_move_callback(window, mouse_move_callback);
   return 0;
 }
 
@@ -51,7 +49,6 @@ void app_mainloop() {
   double fps = 1.0f / delta;
   diag_listener_add("frame_time", " Frame time: %.3f ms\n", &frame_time);
   diag_listener_add("fps", " FPS: %.0f\n", &fps);
-  diag_listener_add("x", " x: %d\n", &pos_x);
 
   do {
     int state;
@@ -62,7 +59,7 @@ void app_mainloop() {
     app_tick(dt);
     app_update();
 
-    uint32_t *window_buffer = renderer_get_buffer(rn);
+    uint32_t *window_buffer = renderer_get_buffer(&rn);
     state = mfb_update_ex(window, window_buffer, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     if (state < 0) {
@@ -81,10 +78,11 @@ void app_mainloop() {
   diag_exit();
 }
 
-void app_tick(double dt) {}
+void app_tick(double dt) { world_update(); }
 
 void app_update() {
-  renderer_reset_buffer(rn);
-  coor_transformer_create_closed_polyline(&ct, star, 0xFFFF0000);
+  renderer_reset_buffer(&rn);
+  world_render(&ct);
+
   // renderer_create_line(rn, 300, 400, pos_x, pos_y);
 }
