@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX_PRINT_INTERVAL 8.0f
+#define PRINT_INTERVAL 8.0f
 
 void clear_output() {
 #ifdef _WIN32
@@ -23,7 +23,7 @@ typedef struct _diag_listener {
 
 static vector *listeners = NULL;
 static struct mfb_timer *timer = NULL;
-static double since_last_print = 1.0f / MAX_PRINT_INTERVAL;
+static double since_last_print = 1.0f / PRINT_INTERVAL;
 
 void init() {
   if (listeners == NULL) {
@@ -45,7 +45,7 @@ void diag_listener_add(const char *key, const char *desc, void *value) {
 
 void diag_print_info() {
   since_last_print += mfb_timer_delta(timer);
-  if (since_last_print <= 1.0f / MAX_PRINT_INTERVAL)
+  if (since_last_print <= 1.0f / PRINT_INTERVAL)
     return;
   since_last_print = 0.0f;
 

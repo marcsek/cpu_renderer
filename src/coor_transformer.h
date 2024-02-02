@@ -1,6 +1,7 @@
 #ifndef COORDINATE_TRANSFORMER_H
 #define COORDINATE_TRANSFORMER_H
 
+#include "drawable.h"
 #include "renderer/renderer.h"
 
 typedef struct {
@@ -8,7 +9,6 @@ typedef struct {
 } coordinate_transformer;
 
 coordinate_transformer coor_tranformer_create(renderer *rn);
-void coor_transformer_create_closed_polyline(coordinate_transformer *ct,
-                                             vector *verts, uint32_t v);
+void coor_transformer_draw(coordinate_transformer *ct, drawable *dr);
 
 #endif

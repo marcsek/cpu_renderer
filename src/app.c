@@ -1,26 +1,30 @@
 #include "app.h"
+#include "camera.h"
 #include "coor_transformer.h"
 #include "helpers/diagnostics.h"
+#include "keyboard.h"
 #include "renderer/renderer.h"
 #include "world.h"
 #include <MiniFB.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/param.h>
 
 static struct mfb_window *window;
+static keyboard *kbd;
 static renderer rn;
 static world wrld;
 static coordinate_transformer ct;
+static camera cm;
 
-void app_tick(double dt);
-void app_update();
+static void handle_keypress();
+static void app_tick(double dt);
+static void app_update();
 
-// void mouse_move_callback(struct mfb_window *w, int x, int y) {
-//   pos_x = x;
-//   pos_y = y;
-// }
+static void keyboard_listener(struct mfb_window *window, mfb_key key,
+                              mfb_key_mod mod, bool isPressed) {
+  kbd_register_key_press(kbd, key, isPressed);
+}
 
 int app_init() {
   window = mfb_open_ex(WINDOW_NAME, WINDOW_WIDTH, WINDOW_HEIGHT, WF_RESIZABLE);
@@ -29,14 +33,15 @@ int app_init() {
     return -1;
 
   rn = renderer_create(WINDOW_WIDTH, WINDOW_HEIGHT);
-
   ct = coor_tranformer_create(&rn);
+  cm = camera_create(&ct);
+  kbd = kbd_create();
 
   mfb_set_target_fps(TARGET_FPS);
+  mfb_set_keyboard_callback(window, keyboard_listener);
 
-  world_create();
+  world_create(window);
 
-  // mfb_set_mouse_move_callback(window, mouse_move_callback);
   return 0;
 }
 
@@ -78,11 +83,35 @@ void app_mainloop() {
   diag_exit();
 }
 
-void app_tick(double dt) { world_update(); }
+static void app_tick(double dt) {
+  handle_keypress();
+  world_update();
+}
 
-void app_update() {
+static void app_update() {
   renderer_reset_buffer(&rn);
-  world_render(&ct);
+  world_render(&cm);
+}
 
-  // renderer_create_line(rn, 300, 400, pos_x, pos_y);
+static void handle_keypress() {
+  float speed = 4.0f;
+
+  if (kbd_key_is_pressed(kbd, KB_KEY_W)) {
+    camera_move_by(&cm, (vec2){0.0f, speed});
+  }
+  if (kbd_key_is_pressed(kbd, KB_KEY_A)) {
+    camera_move_by(&cm, (vec2){-speed, 0.0f});
+  }
+  if (kbd_key_is_pressed(kbd, KB_KEY_S)) {
+    camera_move_by(&cm, (vec2){0.0f, -speed});
+  }
+  if (kbd_key_is_pressed(kbd, KB_KEY_D)) {
+    camera_move_by(&cm, (vec2){speed, 0.0f});
+  }
+  if (kbd_key_is_pressed(kbd, KB_KEY_Q)) {
+    cm.scale *= 1.05f;
+  }
+  if (kbd_key_is_pressed(kbd, KB_KEY_E)) {
+    cm.scale *= 0.95f;
+  }
 }

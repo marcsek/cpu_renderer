@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/param.h>
 
 static uint32_t *base_buffer = NULL;
 
@@ -26,7 +25,8 @@ renderer renderer_create(size_t buffer_width, size_t buffer_height) {
 
 uint32_t *renderer_get_buffer(renderer *rn) { return rn->_buffer; }
 
-void renderer_put_pixel(renderer *rn, uint x, uint y, uint32_t v) {
+void renderer_put_pixel(renderer *rn, unsigned int x, unsigned int y,
+                        uint32_t v) {
   assert(x >= 0 && x < rn->buffer_width);
   assert(y >= 0 && y < rn->buffer_height);
   rn->_buffer[rn->buffer_width * y + x] = v;
