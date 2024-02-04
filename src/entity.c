@@ -23,9 +23,12 @@ void entity_rotate_by(entity *en, float angle_in) { en->angle += angle_in; }
 
 drawable entity_get_drawable(entity *en) {
   drawable dr = drawable_create(copy_model(en), en->color);
-  drawable_scale(&dr, en->scale);
-  drawable_rotate(&dr, en->angle);
-  drawable_translate(&dr, &en->pos);
+  mat3 rot = mat3_rotation(en->angle);
+  mat3 scale = mat3_scale(en->scale);
+  mat3 transl = mat3_translation(&en->pos);
+  mat3 intermediate = mat3_mult_mat3(&transl, &scale);
+  mat3 transform = mat3_mult_mat3(&intermediate, &rot);
+  drawable_apply_transformation(&dr, &transform);
   return dr;
 }
 

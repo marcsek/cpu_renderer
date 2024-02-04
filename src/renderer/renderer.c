@@ -1,4 +1,5 @@
 #include "renderer.h"
+#include "mat3.h"
 #include <assert.h>
 #include <math.h>
 #include <stdint.h>
@@ -94,23 +95,33 @@ void renderer_create_line(renderer *rn, int x1, int y1, int x2, int y2,
   }
 }
 
-void renderer_create_closed_polyline(renderer *rn, vector *verts, uint32_t v) {
+void renderer_create_closed_polyline(renderer *rn, vector *verts,
+                                     mat3 transform, uint32_t v) {
   vec2 **data = (vec2 **)vector_get_data(verts);
   size_t verts_len = vector_get_size(verts);
-  vec2 *v1 = NULL;
-  vec2 *v2 = NULL;
 
   if (verts_len < 1) {
     return;
   }
 
-  for (size_t i = 0; i < verts_len - 1; i++) {
-    v1 = data[i];
-    v2 = data[i + 1];
+  vec2 *vec_cur = data[0];
+  vec3 vec_cur_t =
+      mat3_mult_vec3(&transform, &(vec3){vec_cur->x, vec_cur->y, 1.0f});
 
-    renderer_create_line(rn, (int)v1->x, (int)v1->y, (int)v2->x, (int)v2->y, v);
+  for (size_t i = 1; i < verts_len; i++) {
+    vec2 *vec_next = data[i];
+    vec3 vec_next_t =
+        mat3_mult_vec3(&transform, &(vec3){vec_next->x, vec_next->y, 1.0f});
+
+    renderer_create_line(rn, (int)vec_cur_t.x, (int)vec_cur_t.y,
+                         (int)vec_next_t.x, (int)vec_next_t.y, v);
+    vec_cur = vec_next;
+    vec_cur_t = vec_next_t;
   }
-  v1 = data[verts_len - 1];
-  v2 = data[0];
-  renderer_create_line(rn, (int)v1->x, (int)v1->y, (int)v2->x, (int)v2->y, v);
+  vec2 *vec_next = data[0];
+  vec3 vec_next_t =
+      mat3_mult_vec3(&transform, &(vec3){vec_next->x, vec_next->y, 1.0f});
+
+  renderer_create_line(rn, (int)vec_cur_t.x, (int)vec_cur_t.y,
+                       (int)vec_next_t.x, (int)vec_next_t.y, v);
 }
