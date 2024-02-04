@@ -85,7 +85,7 @@ void app_mainloop() {
 
 static void app_tick(double dt) {
   handle_keypress();
-  world_update();
+  world_update(dt);
 }
 
 static void app_update() {
@@ -113,5 +113,8 @@ static void handle_keypress() {
   }
   if (kbd_key_is_pressed(kbd, KB_KEY_E)) {
     cm.scale *= 0.95f;
+  }
+  if (kbd_key_is_pressed(kbd, KB_KEY_R)) {
+    camera_rotate_by(&cm, 0.05f);
   }
 }

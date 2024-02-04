@@ -2,7 +2,6 @@
 #include "camera.h"
 #include "entity.h"
 #include "shapes/shapes.h"
-#include "vector.h"
 #include <MiniFB.h>
 #include <notstd.h>
 
@@ -23,8 +22,9 @@ void world_create(struct mfb_window *window) {
   entity_translate_by(&star[3], (vec2){200.0f, 200.0f});
 }
 
-void world_update() {
+void world_update(double dt) {
   for (size_t i = 0; i < 4; i++) {
+    entity_rotate_by(&star[i], 0.5f * dt);
     entity_translate_by(&star[i], (vec2){0.0f, 0.0f});
   }
 }

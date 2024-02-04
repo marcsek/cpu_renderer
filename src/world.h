@@ -7,7 +7,7 @@ typedef struct {
 } world;
 
 void world_create(struct mfb_window *window);
-void world_update();
+void world_update(double dt);
 void world_render(camera *cm);
 
 #endif
