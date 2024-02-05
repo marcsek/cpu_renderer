@@ -3,13 +3,10 @@
 
 #define TOTAL_KEY_CODES 512
 
-struct keyboard {
-  bool *keystate;
-};
-
-keyboard *kbd_create() {
-  keyboard *kbd = malloc(sizeof(keyboard));
-  kbd->keystate = malloc(sizeof(bool) * TOTAL_KEY_CODES);
+keyboard kbd_create() {
+  keyboard kbd = (keyboard){
+      .keystate = malloc(sizeof(bool) * TOTAL_KEY_CODES),
+  };
   return kbd;
 }
 
@@ -26,7 +23,7 @@ void kbd_register_key_press(keyboard *kbd, int key_code, bool state) {
   }
 }
 
-void kbd_destrot(keyboard *kbd) {
+void kbd_destroy(keyboard *kbd) {
   free(kbd->keystate);
   free(kbd);
 }
