@@ -3,7 +3,6 @@
 
 #include "keyboard.h"
 #include <MiniFB.h>
-#include <stdlib.h>
 
 typedef struct {
   keyboard *kbd;

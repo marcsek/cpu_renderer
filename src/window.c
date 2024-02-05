@@ -2,6 +2,7 @@
 #include "MiniFB.h"
 #include "keyboard.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 static void keyboard_listener(struct mfb_window *window, mfb_key key,
                               mfb_key_mod mod, bool isPressed) {
