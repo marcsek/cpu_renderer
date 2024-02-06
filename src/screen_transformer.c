@@ -6,8 +6,9 @@ screen_transformer st_create(float x_size, float y_size) {
 }
 
 void st_transform(screen_transformer *st, vec3 *v) {
-  v->x = (v->x + 1.0f) * st->x_size;
-  v->y = (-v->y + 1.0f) * st->y_size;
+  const float z_inv = 1.0f / v->z;
+  v->x = (v->x * z_inv + 1.0f) * st->x_size;
+  v->y = (-v->y * z_inv + 1.0f) * st->y_size;
 }
 
 vec3 st_get_transformed(screen_transformer *st, const vec3 *v) {
