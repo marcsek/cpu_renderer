@@ -1,10 +1,8 @@
 #ifndef HELPERS_H
 #define HELPERS_H
 
-void hlp_swap(void **v1, void **v2) {
-  void *temp = *v1;
-  *v1 = *v2;
-  *v2 = temp;
-}
+#define PI 3.141592653589793
+
+void hlp_swap(void **v1, void **v2);
 
 #endif

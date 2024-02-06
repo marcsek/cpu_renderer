@@ -1,6 +1,7 @@
 #include "shapes.h"
 #include "vector.h"
 #include <notstd.h>
+#include <stdlib.h>
 
 static vec3 v_buffer[8];
 static int i_buffer[24] = {0, 1, 1, 3, 3, 2, 2, 0, 0, 4, 1, 5,
@@ -9,7 +10,6 @@ static int i_buffer[24] = {0, 1, 1, 3, 3, 2, 2, 0, 0, 4, 1, 5,
 static int t_buffer[36] = {0, 2, 1, 2, 3, 1, 1, 3, 5, 3, 7, 5,
                            2, 6, 3, 3, 6, 7, 4, 5, 7, 4, 7, 6,
                            0, 4, 2, 2, 4, 6, 0, 1, 4, 1, 5, 4};
-static bool f_buffer[12];
 
 cube cube_create(float size) {
   const float side = size / 2.0f;
@@ -38,6 +38,7 @@ indexed_line_list cube_get_lines(cube *c) {
 }
 
 indexed_triangle_list cube_get_triangles(cube *c) {
-  return (indexed_triangle_list){
-      .vertices = c->vertices, .indices = t_buffer, .cull_flags = f_buffer};
+  return (indexed_triangle_list){.vertices = shape_copy_verts(c->vertices),
+                                 .indices = t_buffer,
+                                 .cull_flags = calloc(12, sizeof(bool))};
 }

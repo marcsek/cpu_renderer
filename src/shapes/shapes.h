@@ -3,7 +3,6 @@
 
 #include "vector.h"
 #include <stdbool.h>
-#include <stdlib.h>
 
 typedef struct {
   vector *vertices;
@@ -23,5 +22,7 @@ typedef struct {
 cube cube_create(float size);
 indexed_line_list cube_get_lines(cube *c);
 indexed_triangle_list cube_get_triangles(cube *c);
+
+vector *shape_copy_verts(vector *model);
 
 #endif
