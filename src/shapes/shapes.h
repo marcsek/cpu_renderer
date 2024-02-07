@@ -15,13 +15,13 @@ typedef struct {
   bool *cull_flags;
 } indexed_triangle_list;
 
-typedef struct {
+typedef struct shape {
+  indexed_line_list (*get_lines)(struct shape *sh);
+  indexed_triangle_list (*get_triangles)(struct shape *sh);
   vector *vertices;
-} cube;
+} shape;
 
-cube cube_create(float size);
-indexed_line_list cube_get_lines(cube *c);
-indexed_triangle_list cube_get_triangles(cube *c);
+shape cube_create(float size);
 
 vector *shape_copy_verts(vector *model);
 

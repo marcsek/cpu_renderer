@@ -11,7 +11,20 @@ static int t_buffer[36] = {0, 2, 1, 2, 3, 1, 1, 3, 5, 3, 7, 5,
                            2, 6, 3, 3, 6, 7, 4, 5, 7, 4, 7, 6,
                            0, 4, 2, 2, 4, 6, 0, 1, 4, 1, 5, 4};
 
-cube cube_create(float size) {
+static indexed_line_list get_lines(shape *sh) {
+  return (indexed_line_list){
+      .vertices = sh->vertices,
+      .indices = i_buffer,
+  };
+}
+
+static indexed_triangle_list get_triangles(shape *sh) {
+  return (indexed_triangle_list){.vertices = shape_copy_verts(sh->vertices),
+                                 .indices = t_buffer,
+                                 .cull_flags = calloc(12, sizeof(bool))};
+}
+
+shape cube_create(float size) {
   const float side = size / 2.0f;
 
   vector *vertices = vector_create(8);
@@ -27,18 +40,9 @@ cube cube_create(float size) {
   for (size_t i = 0; i < 8; i++) {
     vector_push_back(vertices, &v_buffer[i]);
   }
-  return (cube){.vertices = vertices};
-}
-
-indexed_line_list cube_get_lines(cube *c) {
-  return (indexed_line_list){
-      .vertices = c->vertices,
-      .indices = i_buffer,
+  return (shape){
+      .vertices = vertices,
+      .get_lines = get_lines,
+      .get_triangles = get_triangles,
   };
-}
-
-indexed_triangle_list cube_get_triangles(cube *c) {
-  return (indexed_triangle_list){.vertices = shape_copy_verts(c->vertices),
-                                 .indices = t_buffer,
-                                 .cull_flags = calloc(12, sizeof(bool))};
 }

@@ -5,7 +5,7 @@
 #include "scene.h"
 #include <MiniFB.h>
 
-static cube c;
+static shape c;
 screen_transformer st;
 static vec3 rotation = {0.0f, 0.0f, 0.0f};
 static float z_offset = 2.0f;
@@ -40,7 +40,7 @@ static void render(renderer *rn) {
   mat3 rot_matrix = mat3_mult_mat3(&rot_z, &rot_y);
   rot_matrix = mat3_mult_mat3(&rot_matrix, &rot_x);
 
-  indexed_triangle_list triangles = cube_get_triangles(&c);
+  indexed_triangle_list triangles = c.get_triangles(&c);
   vec3 **verts = (vec3 **)vector_get_data(triangles.vertices);
 
   for (size_t i = 0; i < vector_get_size(triangles.vertices); i++) {
