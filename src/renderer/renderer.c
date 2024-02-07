@@ -15,6 +15,17 @@ static void renderer_create_flat_top_triangle(renderer *rn, const vec2 *v1,
 static void renderer_create_flat_bot_triangle(renderer *rn, const vec2 *v1,
                                               const vec2 *v2, const vec2 *v3,
                                               uint32_t v);
+static void renderer_create_flat_top_triangle_tex(renderer *rn,
+                                                  const tex_vertex *v1,
+                                                  const tex_vertex *v2,
+                                                  const tex_vertex *v3,
+                                                  surface *sf);
+
+static void renderer_create_flat_bot_triangle_tex(renderer *rn,
+                                                  const tex_vertex *v1,
+                                                  const tex_vertex *v2,
+                                                  const tex_vertex *v3,
+                                                  surface *sf);
 
 static uint32_t *base_buffer = NULL;
 
@@ -138,6 +149,39 @@ void renderer_create_triangle(renderer *rn, const vec2 *v1, const vec2 *v2,
   }
 }
 
+void renderer_create_triangle_tex(renderer *rn, const tex_vertex *v1,
+                                  const tex_vertex *v2, const tex_vertex *v3,
+                                  surface *sf) {
+  if (v2->pos.y < v1->pos.y) {
+    hlp_swap((void **)&v1, (void **)&v2);
+  }
+  if (v3->pos.y < v2->pos.y)
+    hlp_swap((void **)&v3, (void **)&v2);
+  if (v2->pos.y < v1->pos.y)
+    hlp_swap((void **)&v2, (void **)&v1);
+
+  if (v1->pos.y == v2->pos.y) {
+    if (v2->pos.x < v1->pos.x)
+      hlp_swap((void **)&v1, (void **)&v2);
+    renderer_create_flat_top_triangle_tex(rn, v1, v2, v3, sf);
+  } else if (v3->pos.y == v2->pos.y) {
+    if (v3->pos.x < v2->pos.x)
+      hlp_swap((void **)&v2, (void **)&v3);
+    renderer_create_flat_bot_triangle_tex(rn, v1, v2, v3, sf);
+  } else {
+    const float alphaSplit = (v2->pos.y - v1->pos.y) / (v3->pos.y - v1->pos.y);
+    const tex_vertex vi = tex_ver_interpolate_to(v1, v3, alphaSplit);
+
+    if (v2->pos.x < vi.pos.x) {
+      renderer_create_flat_bot_triangle_tex(rn, v1, v2, &vi, sf);
+      renderer_create_flat_top_triangle_tex(rn, v2, &vi, v3, sf);
+    } else {
+      renderer_create_flat_bot_triangle_tex(rn, v1, &vi, v2, sf);
+      renderer_create_flat_top_triangle_tex(rn, &vi, v2, v3, sf);
+    }
+  }
+}
+
 static void renderer_create_flat_top_triangle(renderer *rn, const vec2 *v1,
                                               const vec2 *v2, const vec2 *v3,
                                               uint32_t v) {
@@ -180,4 +224,92 @@ static void renderer_create_flat_bot_triangle(renderer *rn, const vec2 *v1,
       renderer_put_pixel(rn, x, y, v);
     }
   }
+}
+
+static void
+renderer_create_flat_triangle_tex(renderer *rn, const tex_vertex *v1,
+                                  const tex_vertex *v2, const tex_vertex *v3,
+                                  surface *sf, const tex_vertex *dv1,
+                                  const tex_vertex *dv2, tex_vertex it_edge1) {
+  tex_vertex it_edge0 = *v1;
+
+  const int y_start = (int)ceil((double)(v1->pos.y - 0.5f));
+  const int y_end = (int)ceil((double)(v3->pos.y - 0.5f));
+
+  tex_vertex dv1_c = tex_ver_copy(dv1);
+  tex_ver_mult(&dv1_c, ((float)y_start) + 0.5f - v1->pos.y);
+  tex_ver_add(&it_edge0, &dv1_c);
+
+  tex_vertex dv2_c = tex_ver_copy(dv2);
+  tex_ver_mult(&dv2_c, ((float)y_start) + 0.5f - v1->pos.y);
+  tex_ver_add(&it_edge1, &dv2_c);
+
+  const float tex_width = (float)sf->width;
+  const float tex_heigh = (float)sf->height;
+  const float tex_clamp_x = tex_width - 1.0f;
+  const float tex_clamp_y = tex_heigh - 1.0f;
+
+  for (int y = y_start; y < y_end;
+       y++, tex_ver_add(&it_edge0, dv1), tex_ver_add(&it_edge1, dv2)) {
+
+    const int x_start = (int)ceil((double)(it_edge0.pos.x - 0.5f));
+    const int x_end = (int)ceil(((double)it_edge1.pos.x - 0.5f));
+
+    vec2 tc_edge_diff = vec2_copy(&it_edge1.tc);
+    vec2_subs(&tc_edge_diff, &it_edge0.tc);
+    vec2_div_s(&tc_edge_diff, it_edge1.pos.x - it_edge0.pos.x);
+
+    const vec2 dtc_line = vec2_copy(&tc_edge_diff);
+
+    vec2 dtc_line_c = vec2_copy(&dtc_line);
+    vec2_mult_s(&dtc_line_c, ((float)x_start) + 0.5f - it_edge0.pos.x);
+
+    vec2 itc_line = vec2_copy(&it_edge0.tc);
+    vec2_add(&itc_line, &dtc_line_c);
+
+    for (int x = x_start; x < x_end; x++, vec2_add(&itc_line, &dtc_line)) {
+      renderer_put_pixel(
+          rn, x, y,
+          surface_get_pixel(sf, (int)minf(itc_line.x * tex_width, tex_clamp_x),
+                            (int)minf(itc_line.y * tex_heigh, tex_clamp_y)));
+    }
+  }
+}
+
+static void renderer_create_flat_top_triangle_tex(renderer *rn,
+                                                  const tex_vertex *v1,
+                                                  const tex_vertex *v2,
+                                                  const tex_vertex *v3,
+                                                  surface *sf) {
+  const float delta_y = v3->pos.y - v1->pos.y;
+
+  tex_vertex dv0 = tex_ver_copy(v3);
+  tex_ver_sub(&dv0, v1);
+  tex_ver_div(&dv0, delta_y);
+
+  tex_vertex dv1 = tex_ver_copy(v3);
+  tex_ver_sub(&dv1, v2);
+  tex_ver_div(&dv1, delta_y);
+
+  renderer_create_flat_triangle_tex(rn, v1, v2, v3, sf, &dv0, &dv1,
+                                    tex_ver_copy(v2));
+}
+
+static void renderer_create_flat_bot_triangle_tex(renderer *rn,
+                                                  const tex_vertex *v1,
+                                                  const tex_vertex *v2,
+                                                  const tex_vertex *v3,
+                                                  surface *sf) {
+  const float delta_y = v3->pos.y - v1->pos.y;
+
+  tex_vertex dv0 = tex_ver_copy(v2);
+  tex_ver_sub(&dv0, v1);
+  tex_ver_div(&dv0, delta_y);
+
+  tex_vertex dv1 = tex_ver_copy(v3);
+  tex_ver_sub(&dv1, v1);
+  tex_ver_div(&dv1, delta_y);
+
+  renderer_create_flat_triangle_tex(rn, v1, v2, v3, sf, &dv0, &dv1,
+                                    tex_ver_copy(v1));
 }

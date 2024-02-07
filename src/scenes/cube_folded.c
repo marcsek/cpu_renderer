@@ -8,6 +8,7 @@
 
 static shape c;
 screen_transformer st;
+surface sf;
 static vec3 rotation = {0.0f, 0.0f, 0.0f};
 static float z_offset = 2.0f;
 
@@ -28,11 +29,6 @@ static void update(keyboard *kbd, double dt) {
     z_offset -= 1.5f * dt;
   }
 }
-
-static const uint32_t colors[12] = {
-    0xFFFF0000, 0xFF880000, 0xFFFF8800, 0xFFFFFF00, 0xFFFFFF88, 0xFFFFFFFF,
-    0xFF88FFFF, 0xFF00FFFF, 0xFFFF88FF, 0xFFFF00FF, 0xFF8888FF, 0xFF8800FF,
-};
 
 static void render(renderer *rn) {
   mat3 rot_x = mat3_rotationX(rotation.x);
@@ -70,21 +66,20 @@ static void render(renderer *rn) {
     int i1 = triangles.indices[i];
     int i2 = triangles.indices[i + 1];
     int i3 = triangles.indices[i + 2];
-    vec3 *v1 = &verts[i1]->pos;
-    vec3 *v2 = &verts[i2]->pos;
-    vec3 *v3 = &verts[i3]->pos;
+    tex_vertex *v1 = verts[i1];
+    tex_vertex *v2 = verts[i2];
+    tex_vertex *v3 = verts[i3];
 
     if (!triangles.cull_flags[i / 3]) {
-      renderer_create_triangle(rn, &(vec2){.x = v1->x, .y = v1->y},
-                               &(vec2){.x = v2->x, .y = v2->y},
-                               &(vec2){.x = v3->x, .y = v3->y}, colors[i / 3]);
+      renderer_create_triangle_tex(rn, v1, v2, v3, &sf);
     }
   }
 }
 
-scene scene_solid_cube_create() {
+scene scene_cube_tex_create() {
   st = st_create(WINDOW_WIDTH, WINDOW_HEIGHT);
-  c = cube_create(1.0f);
+  c = cube_folded_create(1.0f);
+  sf = surface_from_file("assets/sunf.png");
 
   return (scene){
       .update = update,

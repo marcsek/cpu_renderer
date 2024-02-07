@@ -11,7 +11,7 @@ static window wnd;
 static renderer rn;
 
 // **
-#define SCENE_LEN 3
+#define SCENE_LEN 4
 static scene scenes[SCENE_LEN];
 size_t cur_scene = 2;
 bool did_cycle = false;
@@ -36,7 +36,8 @@ int app_init() {
   // **
   scenes[0] = scene_solid_cube_create();
   scenes[1] = scene_cube_order_create();
-  scenes[2] = scene_flat_image_create();
+  scenes[2] = scene_cube_tex_create();
+  scenes[3] = scene_flat_image_create();
   // **
 
   return 0;

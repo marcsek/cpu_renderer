@@ -5,4 +5,6 @@
 
 void hlp_swap(void **v1, void **v2);
 
+float minf(float v1, float v2);
+
 #endif

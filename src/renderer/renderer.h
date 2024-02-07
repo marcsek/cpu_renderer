@@ -1,5 +1,7 @@
 #ifndef RENDERER_H
 #define RENDERER_H
+#include "../surface.h"
+#include "../texture-vertex.h"
 #include "mat3.h"
 #include <notstd.h>
 #include <stdint.h>
@@ -24,5 +26,8 @@ void renderer_create_closed_polyline(renderer *rn, vector *verts,
                                      mat3 transform, uint32_t v);
 void renderer_create_triangle(renderer *rn, const vec2 *v1, const vec2 *v2,
                               const vec2 *v3, uint32_t v);
+void renderer_create_triangle_tex(renderer *rn, const tex_vertex *v1,
+                                  const tex_vertex *v2, const tex_vertex *v3,
+                                  surface *sf);
 
 #endif
