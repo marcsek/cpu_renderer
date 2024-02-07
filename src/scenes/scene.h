@@ -11,5 +11,6 @@ typedef struct {
 
 scene scene_solid_cube_create();
 scene scene_cube_order_create();
+scene scene_flat_image_create();
 
 #endif
