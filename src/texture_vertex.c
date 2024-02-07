@@ -1,4 +1,4 @@
-#include "texture-vertex.h"
+#include "texture_vertex.h"
 #include "vec3.h"
 
 tex_vertex tex_ver_interpolate_to(const tex_vertex *tv,

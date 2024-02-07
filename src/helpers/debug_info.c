@@ -64,12 +64,12 @@ void debug_info_output() {
     printf("\n");
   }
 
-  printf("\n - LOG MESSAGES - \n\n");
+  printf("\n\n| - LOG MESSAGES - \n|     *   *   *\n");
 
   char **printf_vals = (char **)vector_get_data(printf_info);
 
   for (size_t i = 0; i < vector_get_size(printf_info); i++) {
-    printf("%s\n", printf_vals[i]);
+    printf("|  - %s\n", printf_vals[i]);
   }
 }
 

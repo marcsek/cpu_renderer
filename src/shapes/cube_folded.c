@@ -1,4 +1,4 @@
-#include "../texture-vertex.h"
+#include "../texture_vertex.h"
 #include "shapes.h"
 #include "vector.h"
 #include <notstd.h>
@@ -17,20 +17,20 @@ static int t_buffer[36] = {0, 2,  1,  2, 3,  1, 4,  8, 5, 5,  8, 9,
 
 static indexed_line_list get_lines(shape *sh) {
   return (indexed_line_list){
-      .vertices = sh->vertices,
+      .vertices = sh->tex_verts,
       .indices = i_buffer,
   };
 }
 
 static indexed_triangle_list get_triangles(shape *sh) {
-  return (indexed_triangle_list){.vertices = shape_copy_verts(sh->vertices),
+  return (indexed_triangle_list){.vertices = shape_copy_verts(sh->tex_verts),
                                  .indices = t_buffer,
                                  .cull_flags = calloc(12, sizeof(bool))};
 }
 
 static indexed_triangle_list_tex get_triangles_tex(struct shape *sh) {
   return (indexed_triangle_list_tex){
-      .vertices = shape_copy_verts_tex(sh->tv),
+      .vertices = shape_copy_verts_tex(sh->tex_verts),
       .indices = t_buffer,
       .cull_flags = calloc(12, sizeof(bool)),
   };
@@ -39,7 +39,6 @@ static indexed_triangle_list_tex get_triangles_tex(struct shape *sh) {
 shape cube_folded_create(float size) {
   const float side = size / 2.0f;
 
-  vector *vertices = vector_create(14);
   vector *tv = vector_create(14);
   v_buffer[0] = (vec3){-side, -side, -side};
   tc_buffer[0] = (vec2){1.0f, 0.0f};
@@ -84,13 +83,11 @@ shape cube_folded_create(float size) {
   tc_buffer[13] = (vec2){1.0f, 0.0f};
 
   for (size_t i = 0; i < 14; i++) {
-    vector_push_back(vertices, &v_buffer[i]);
     tv_buffer[i] = (tex_vertex){.tc = tc_buffer[i], .pos = v_buffer[i]};
     vector_push_back(tv, &tv_buffer[i]);
   }
   return (shape){
-      .tv = tv,
-      .vertices = vertices,
+      .tex_verts = tv,
       .get_lines = get_lines,
       .get_triangles = get_triangles,
       .get_triangles_tex = get_triangles_tex,

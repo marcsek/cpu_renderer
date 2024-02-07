@@ -1,8 +1,7 @@
 #include "../app.h"
-#include "../helpers/helpers.h"
 #include "../screen_transformer.h"
 #include "../shapes/shapes.h"
-#include "../texture-vertex.h"
+#include "../texture_vertex.h"
 #include "scene.h"
 #include <MiniFB.h>
 

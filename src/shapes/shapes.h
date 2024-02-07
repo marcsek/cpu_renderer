@@ -25,8 +25,7 @@ typedef struct shape {
   indexed_line_list (*get_lines)(struct shape *sh);
   indexed_triangle_list (*get_triangles)(struct shape *sh);
   indexed_triangle_list_tex (*get_triangles_tex)(struct shape *sh);
-  vector *vertices;
-  vector *tv;
+  vector *tex_verts;
 } shape;
 
 shape cube_create(float size);

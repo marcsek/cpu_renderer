@@ -1,8 +1,7 @@
 #include "../app.h"
-#include "../helpers/helpers.h"
 #include "../screen_transformer.h"
 #include "../shapes/shapes.h"
-#include "../texture-vertex.h"
+#include "../texture_vertex.h"
 #include "scene.h"
 #include <MiniFB.h>
 
@@ -76,7 +75,7 @@ static void render(renderer *rn) {
   }
 }
 
-scene scene_cube_tex_create() {
+scene scene_cube_folded_create() {
   st = st_create(WINDOW_WIDTH, WINDOW_HEIGHT);
   c = cube_folded_create(1.0f);
   sf = surface_from_file("assets/sunf.png");

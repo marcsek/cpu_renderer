@@ -1,5 +1,5 @@
 #include "shapes.h"
-#include "../texture-vertex.h"
+#include "../texture_vertex.h"
 #include "vec2.h"
 #include "vec3.h"
 #include <stdlib.h>

@@ -1,5 +1,4 @@
 #include "../app.h"
-#include "../helpers/helpers.h"
 #include "../screen_transformer.h"
 #include "../shapes/shapes.h"
 #include "scene.h"
@@ -42,18 +41,18 @@ static void render(renderer *rn) {
     mat3 rot_matrix = mat3_mult_mat3(&rot_z, &rot_y);
     rot_matrix = mat3_mult_mat3(&rot_matrix, &rot_x);
 
-    indexed_triangle_list triangles = c.get_triangles(&c);
-    vec3 **verts = (vec3 **)vector_get_data(triangles.vertices);
+    indexed_triangle_list_tex triangles = c.get_triangles_tex(&c);
+    tex_vertex **verts = (tex_vertex **)vector_get_data(triangles.vertices);
 
     for (size_t i = 0; i < vector_get_size(triangles.vertices); i++) {
-      *verts[i] = mat3_mult_vec3(&rot_matrix, verts[i]);
-      vec3_add(verts[i], &(vec3){.z = 2.0f});
+      verts[i]->pos = mat3_mult_vec3(&rot_matrix, &verts[i]->pos);
+      vec3_add(&verts[i]->pos, &(vec3){.z = 2.0f});
     }
 
     for (size_t i = 0; i < 36; i += 3) {
-      vec3 *v1 = verts[triangles.indices[i]];
-      vec3 v2_c = vec3_copy(verts[triangles.indices[i + 1]]);
-      vec3 v3_c = vec3_copy(verts[triangles.indices[i + 2]]);
+      vec3 *v1 = &verts[triangles.indices[i]]->pos;
+      vec3 v2_c = vec3_copy(&verts[triangles.indices[i + 1]]->pos);
+      vec3 v3_c = vec3_copy(&verts[triangles.indices[i + 2]]->pos);
 
       vec3_subs(&v2_c, v1);
       vec3_subs(&v3_c, v1);
@@ -64,16 +63,16 @@ static void render(renderer *rn) {
     }
 
     for (size_t i = 0; i < vector_get_size(triangles.vertices); i++) {
-      st_transform(&st, verts[i]);
+      st_transform(&st, &verts[i]->pos);
     }
 
     for (size_t i = 0; i < 36; i += 3) {
       int i1 = triangles.indices[i];
       int i2 = triangles.indices[i + 1];
       int i3 = triangles.indices[i + 2];
-      vec3 *v1 = verts[i1];
-      vec3 *v2 = verts[i2];
-      vec3 *v3 = verts[i3];
+      vec3 *v1 = &verts[i1]->pos;
+      vec3 *v2 = &verts[i2]->pos;
+      vec3 *v3 = &verts[i3]->pos;
 
       if (!triangles.cull_flags[i / 3]) {
         renderer_create_triangle(rn, &(vec2){.x = v1->x, .y = v1->y},
@@ -91,18 +90,18 @@ static void render(renderer *rn) {
     mat3 rot_matrix = mat3_mult_mat3(&rot_z, &rot_y);
     rot_matrix = mat3_mult_mat3(&rot_matrix, &rot_x);
 
-    indexed_triangle_list triangles = c.get_triangles(&c);
-    vec3 **verts = (vec3 **)vector_get_data(triangles.vertices);
+    indexed_triangle_list_tex triangles = c.get_triangles_tex(&c);
+    tex_vertex **verts = (tex_vertex **)vector_get_data(triangles.vertices);
 
     for (size_t i = 0; i < vector_get_size(triangles.vertices); i++) {
-      *verts[i] = mat3_mult_vec3(&rot_matrix, verts[i]);
-      vec3_add(verts[i], &(vec3){.z = z_offset});
+      verts[i]->pos = mat3_mult_vec3(&rot_matrix, &verts[i]->pos);
+      vec3_add(&verts[i]->pos, &(vec3){.z = z_offset});
     }
 
     for (size_t i = 0; i < 36; i += 3) {
-      vec3 *v1 = verts[triangles.indices[i]];
-      vec3 v2_c = vec3_copy(verts[triangles.indices[i + 1]]);
-      vec3 v3_c = vec3_copy(verts[triangles.indices[i + 2]]);
+      vec3 *v1 = &verts[triangles.indices[i]]->pos;
+      vec3 v2_c = vec3_copy(&verts[triangles.indices[i + 1]]->pos);
+      vec3 v3_c = vec3_copy(&verts[triangles.indices[i + 2]]->pos);
 
       vec3_subs(&v2_c, v1);
       vec3_subs(&v3_c, v1);
@@ -113,16 +112,16 @@ static void render(renderer *rn) {
     }
 
     for (size_t i = 0; i < vector_get_size(triangles.vertices); i++) {
-      st_transform(&st, verts[i]);
+      st_transform(&st, &verts[i]->pos);
     }
 
     for (size_t i = 0; i < 36; i += 3) {
       int i1 = triangles.indices[i];
       int i2 = triangles.indices[i + 1];
       int i3 = triangles.indices[i + 2];
-      vec3 *v1 = verts[i1];
-      vec3 *v2 = verts[i2];
-      vec3 *v3 = verts[i3];
+      vec3 *v1 = &verts[i1]->pos;
+      vec3 *v2 = &verts[i2]->pos;
+      vec3 *v3 = &verts[i3]->pos;
 
       if (!triangles.cull_flags[i / 3]) {
         renderer_create_triangle(rn, &(vec2){.x = v1->x, .y = v1->y},

@@ -1,6 +1,4 @@
 #include "renderer.h"
-#include "../helpers/debug_info.h"
-#include "../helpers/helpers.h"
 #include "vec2.h"
 #include <assert.h>
 #include <math.h>
@@ -118,19 +116,19 @@ void renderer_create_line(renderer *rn, int x1, int y1, int x2, int y2,
 void renderer_create_triangle(renderer *rn, const vec2 *v1, const vec2 *v2,
                               const vec2 *v3, uint32_t v) {
   if (v2->y < v1->y)
-    hlp_swap((void **)&v1, (void **)&v2);
+    nstd_swap((void **)&v1, (void **)&v2);
   if (v3->y < v2->y)
-    hlp_swap((void **)&v3, (void **)&v2);
+    nstd_swap((void **)&v3, (void **)&v2);
   if (v2->y < v1->y)
-    hlp_swap((void **)&v2, (void **)&v1);
+    nstd_swap((void **)&v2, (void **)&v1);
 
   if (v1->y == v2->y) {
     if (v2->x < v1->x)
-      hlp_swap((void **)&v1, (void **)&v2);
+      nstd_swap((void **)&v1, (void **)&v2);
     renderer_create_flat_top_triangle(rn, v1, v2, v3, v);
   } else if (v3->y == v2->y) {
     if (v3->x < v2->x)
-      hlp_swap((void **)&v2, (void **)&v3);
+      nstd_swap((void **)&v2, (void **)&v3);
     renderer_create_flat_bot_triangle(rn, v1, v2, v3, v);
   } else {
     const float alphaSplit = (v2->y - v1->y) / (v3->y - v1->y);
@@ -153,20 +151,20 @@ void renderer_create_triangle_tex(renderer *rn, const tex_vertex *v1,
                                   const tex_vertex *v2, const tex_vertex *v3,
                                   surface *sf) {
   if (v2->pos.y < v1->pos.y) {
-    hlp_swap((void **)&v1, (void **)&v2);
+    nstd_swap((void **)&v1, (void **)&v2);
   }
   if (v3->pos.y < v2->pos.y)
-    hlp_swap((void **)&v3, (void **)&v2);
+    nstd_swap((void **)&v3, (void **)&v2);
   if (v2->pos.y < v1->pos.y)
-    hlp_swap((void **)&v2, (void **)&v1);
+    nstd_swap((void **)&v2, (void **)&v1);
 
   if (v1->pos.y == v2->pos.y) {
     if (v2->pos.x < v1->pos.x)
-      hlp_swap((void **)&v1, (void **)&v2);
+      nstd_swap((void **)&v1, (void **)&v2);
     renderer_create_flat_top_triangle_tex(rn, v1, v2, v3, sf);
   } else if (v3->pos.y == v2->pos.y) {
     if (v3->pos.x < v2->pos.x)
-      hlp_swap((void **)&v2, (void **)&v3);
+      nstd_swap((void **)&v2, (void **)&v3);
     renderer_create_flat_bot_triangle_tex(rn, v1, v2, v3, sf);
   } else {
     const float alphaSplit = (v2->pos.y - v1->pos.y) / (v3->pos.y - v1->pos.y);
@@ -270,8 +268,8 @@ renderer_create_flat_triangle_tex(renderer *rn, const tex_vertex *v1,
     for (int x = x_start; x < x_end; x++, vec2_add(&itc_line, &dtc_line)) {
       renderer_put_pixel(
           rn, x, y,
-          surface_get_pixel(sf, (int)minf(itc_line.x * tex_width, tex_clamp_x),
-                            (int)minf(itc_line.y * tex_heigh, tex_clamp_y)));
+          surface_get_pixel(sf, (int)MIN(itc_line.x * tex_width, tex_clamp_x),
+                            (int)MIN(itc_line.y * tex_heigh, tex_clamp_y)));
     }
   }
 }

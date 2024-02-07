@@ -36,7 +36,7 @@ int app_init() {
   // **
   scenes[0] = scene_solid_cube_create();
   scenes[1] = scene_cube_order_create();
-  scenes[2] = scene_cube_tex_create();
+  scenes[2] = scene_cube_folded_create();
   scenes[3] = scene_flat_image_create();
   // **
 

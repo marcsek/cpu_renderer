@@ -1,7 +1,7 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 #include "../surface.h"
-#include "../texture-vertex.h"
+#include "../texture_vertex.h"
 #include "mat3.h"
 #include <notstd.h>
 #include <stdint.h>
