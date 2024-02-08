@@ -34,8 +34,9 @@ surface surface_from_file(const char *filename) {
     return (surface){};
   }
 
-  debug_printf("loaded image asset -> name: \"%s\"; size: %ux%upx (%u bytes);",
-               filename, x, y, 4 * img_size);
+  debug_printf(
+      "loaded image asset -> name: \"%s\"; size: %ux%upx (%u bytes); pitch: %d",
+      filename, x, y, 4 * img_size, pitch);
 
   stbi_image_free(data);
   return (surface){.p_buffer = converted, .width = x, .height = y};
@@ -44,5 +45,5 @@ surface surface_from_file(const char *filename) {
 uint32_t surface_get_pixel(surface *s, unsigned int x, unsigned int y) {
   assert(x >= 0 && x < s->width);
   assert(y >= 0 && y < s->height);
-  return s->p_buffer[s->height * y + x];
+  return s->p_buffer[s->width * y + x];
 }

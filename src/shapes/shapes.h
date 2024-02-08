@@ -18,14 +18,11 @@ typedef struct {
 typedef struct {
   vector *vertices;
   int *indices;
-  bool *cull_flags;
 } indexed_triangle_list_tex;
 
 typedef struct shape {
-  indexed_line_list (*get_lines)(struct shape *sh);
-  indexed_triangle_list (*get_triangles)(struct shape *sh);
-  indexed_triangle_list_tex (*get_triangles_tex)(struct shape *sh);
-  vector *tex_verts;
+  indexed_triangle_list_tex (*get_skinned)(struct shape *sh);
+  vector *vertices;
 } shape;
 
 shape cube_create(float size);

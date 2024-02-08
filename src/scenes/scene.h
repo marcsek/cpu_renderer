@@ -9,9 +9,7 @@ typedef struct {
   void (*render)(renderer *rn);
 } scene;
 
-scene scene_solid_cube_create();
-scene scene_cube_order_create();
-scene scene_flat_image_create();
-scene scene_cube_folded_create();
+scene scene_solid_cube_create(renderer *rn);
+scene scene_texture_create(renderer *rn);
 
 #endif
