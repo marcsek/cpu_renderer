@@ -11,7 +11,7 @@ static window wnd;
 static renderer rn;
 
 // **
-#define SCENE_LEN 2
+#define SCENE_LEN 3
 static scene scenes[SCENE_LEN];
 size_t cur_scene = 0;
 bool did_cycle = false;
@@ -34,8 +34,9 @@ int app_init() {
   mfb_set_target_fps(TARGET_FPS);
 
   // **
-  scenes[0] = scene_solid_cube_create(&rn);
-  scenes[1] = scene_texture_create(&rn);
+  scenes[0] = scene_color_cube_create(&rn);
+  scenes[1] = scene_solid_cube_create(&rn);
+  scenes[2] = scene_texture_create(&rn);
   // **
 
   return 0;

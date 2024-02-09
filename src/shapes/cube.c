@@ -5,14 +5,28 @@
 #include <stdbool.h>
 
 static vec3 v_buffer[14];
+static vec3 vi_buffer[14];
 static vec2 tc_buffer[14];
+static vec3 c_buffer[14];
 static vertex tv_buffer[14];
+static vertex tvi_buffer[8];
 static int i_buffer[24] = {0, 1, 1, 3, 3, 2, 2, 0, 0, 4, 1, 5,
                            3, 7, 2, 6, 4, 5, 5, 7, 7, 6, 6, 4};
 
 static int t_buffer[36] = {0, 2,  1,  2, 3,  1, 4,  8, 5, 5,  8, 9,
                            2, 6,  3,  3, 6,  7, 4,  5, 7, 4,  7, 6,
                            2, 10, 11, 2, 11, 6, 12, 3, 7, 12, 7, 13};
+
+static int t_buffer_p[36] = {0, 2, 1, 2, 3, 1, 1, 3, 5, 3, 7, 5,
+                             2, 6, 3, 3, 6, 7, 4, 5, 7, 4, 7, 6,
+                             0, 4, 2, 2, 4, 6, 0, 1, 4, 1, 5, 4};
+
+static indexed_triangle_list get_plain(shape *sh) {
+  return (indexed_triangle_list){
+      .vertices = sh->vertices_p,
+      .indices = t_buffer_p,
+  };
+}
 
 static indexed_triangle_list get_skinned(shape *sh) {
   return (indexed_triangle_list){
@@ -77,4 +91,33 @@ shape cube_create(float size) {
   }
 
   return (shape){.get_skinned = get_skinned, .vertices = tv};
+}
+
+shape cube_create_plain(float size) {
+  const float side = size / 2.0f;
+
+  vector *v = vector_create(14);
+  vi_buffer[0] = (vec3){-side, -side, -side};
+  c_buffer[0] = (vec3){0x00, 0x00, 0x00};
+  vi_buffer[1] = (vec3){side, -side, -side};
+  c_buffer[1] = (vec3){0xFF, 0x00, 0x00};
+  vi_buffer[2] = (vec3){-side, side, -side};
+  c_buffer[2] = (vec3){0x00, 0xFF, 0x00};
+  vi_buffer[3] = (vec3){side, side, -side};
+  c_buffer[3] = (vec3){0xFF, 0xFF, 0x00};
+  vi_buffer[4] = (vec3){-side, -side, side};
+  c_buffer[4] = (vec3){0x00, 0x00, 0xFF};
+  vi_buffer[5] = (vec3){side, -side, side};
+  c_buffer[5] = (vec3){0xFF, 0x00, 0xFF};
+  vi_buffer[6] = (vec3){-side, side, side};
+  c_buffer[6] = (vec3){0x00, 0xFF, 0xFF};
+  vi_buffer[7] = (vec3){side, side, side};
+  c_buffer[7] = (vec3){0xFF, 0xFF, 0xFF};
+
+  for (size_t i = 0; i < 8; i++) {
+    tvi_buffer[i] = color_vertex_create(vi_buffer[i], &c_buffer[i]);
+    vector_push_back(v, &tvi_buffer[i]);
+  }
+
+  return (shape){.get_skinned = get_plain, .vertices_p = v};
 }

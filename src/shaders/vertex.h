@@ -17,5 +17,6 @@ typedef struct vertex {
 } vertex;
 
 vertex tex_vertex_create(vec3 pos, void *sd);
+vertex color_vertex_create(vec3 pos, void *sd);
 
 #endif

@@ -13,6 +13,12 @@ typedef struct {
   vec2 *tc;
 } mvertex;
 
+typedef struct pixel_shader_data {
+  surface sf;
+  float tex_xclamp;
+  float tex_yclamp;
+} texture_shader_data;
+
 static vertex copy(const vertex *v) {
   mvertex vm = get_sd(v, vec2);
   vec2 *new_v = malloc(sizeof(vec2));
@@ -90,7 +96,8 @@ static uint32_t create_pixel(void *data, const vertex *inv) {
       (int)MIN(in.tc->y * ((float)px->sf.height) + 0.5f, px->tex_yclamp));
 }
 
-void pixel_bind_texture(texture_shader_data *px, const char *file_name) {
+void texture_shader_bind_texture(texture_shader_data *px,
+                                 const char *file_name) {
   px->sf = surface_from_file(file_name);
   px->tex_xclamp = ((float)px->sf.width) - 1.0f;
   px->tex_yclamp = ((float)px->sf.height) - 1.0f;

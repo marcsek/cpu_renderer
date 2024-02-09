@@ -22,8 +22,9 @@ void verts_cf(void *to_free) {
   free(to_free_v);
 }
 
-pipeline pipeline_create(renderer *rn) {
-  return (pipeline){.rn = rn, .st = st_create(WINDOW_WIDTH, WINDOW_HEIGHT)};
+pipeline pipeline_create(renderer *rn, effect ef) {
+  return (pipeline){
+      .rn = rn, .st = st_create(WINDOW_WIDTH, WINDOW_HEIGHT), .effect = ef};
 }
 
 void pipeline_draw(pipeline *p, indexed_triangle_list *tri_list) {

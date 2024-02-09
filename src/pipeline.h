@@ -24,7 +24,7 @@ typedef struct {
   vertex v2;
 } triangle;
 
-pipeline pipeline_create(renderer *rn);
+pipeline pipeline_create(renderer *rn, effect ef);
 void pipeline_draw(pipeline *p, indexed_triangle_list *tri_list);
 void pipeline_bind_rotation(pipeline *p, const mat3 *rotation_in);
 void pipeline_bind_translation(pipeline *p, const vec3 *translation_in);
