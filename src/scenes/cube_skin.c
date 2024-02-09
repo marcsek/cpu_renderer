@@ -47,7 +47,7 @@ scene scene_solid_cube_create(renderer *rn) {
   st = st_create(WINDOW_WIDTH, WINDOW_HEIGHT);
   shape c = cube_create(1.0f);
   vt = c.get_skinned(&c);
-  pixel_shader ps = tex_ps_create();
+  pixel_shader ps = texture_shader_create();
   pixel_bind_texture(ps.shader_data, "assets/office_skin.png");
   pip = pipeline_create(rn);
 

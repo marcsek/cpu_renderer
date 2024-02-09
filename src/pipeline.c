@@ -16,6 +16,12 @@ static void process_triangles(pipeline *p, const vertex *v0, const vertex *v1,
                               const vertex *v2);
 static void post_process_tverts(pipeline *p, triangle tr);
 
+void verts_cf(void *to_free) {
+  vertex *to_free_v = (vertex *)to_free;
+  to_free_v->free(to_free_v);
+  free(to_free_v);
+}
+
 pipeline pipeline_create(renderer *rn) {
   return (pipeline){.rn = rn, .st = st_create(WINDOW_WIDTH, WINDOW_HEIGHT)};
 }
@@ -36,7 +42,7 @@ void pipeline_bind_translation(pipeline *p, const vec3 *translation_in) {
 static void process_vertices(pipeline *p, const vector *verts, const int *inds,
                              size_t i_len) {
   size_t verts_size = vector_get_size(verts);
-  vector *verts_out = vector_create(verts_size);
+  vector *verts_out = vector_create_cf(verts_size, verts_cf);
   vertex **data = (vertex **)vector_get_data(verts);
 
   assert(verts_size != 0);
@@ -53,6 +59,7 @@ static void process_vertices(pipeline *p, const vector *verts, const int *inds,
   }
 
   assemble_triangles(p, verts_out, inds, i_len);
+  vector_destroy(verts_out);
 }
 
 static void assemble_triangles(pipeline *p, const vector *verts,

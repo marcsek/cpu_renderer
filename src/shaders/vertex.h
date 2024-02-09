@@ -13,6 +13,7 @@ typedef struct vertex {
   void (*div)(struct vertex *v0, float rhs);
   struct vertex (*interpolate_to)(const struct vertex *tv,
                                   const struct vertex *inter_to, float alpha);
+  void (*free)(struct vertex *v);
 } vertex;
 
 vertex tex_vertex_create(vec3 pos, void *sd);

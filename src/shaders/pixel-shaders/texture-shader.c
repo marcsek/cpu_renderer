@@ -61,19 +61,27 @@ static void divd(vertex *v0, float rhs) {
   vec2_div_s(v0m.tc, rhs);
 }
 
+static void vfree(vertex *v) {
+  mvertex vm = get_sd(v, vec2);
+  free(vm.tc);
+}
+
 vertex tex_vertex_create(vec3 pos, void *sd) {
-  return (vertex){.pos = pos,
-                  .sd = sd,
-                  .interpolate_to = interpolate_to,
-                  .copy = copy,
-                  .add = add,
-                  .sub = sub,
-                  .mult = mult,
-                  .div = divd};
+  return (vertex){
+      .pos = pos,
+      .sd = sd,
+      .interpolate_to = interpolate_to,
+      .copy = copy,
+      .add = add,
+      .sub = sub,
+      .mult = mult,
+      .div = divd,
+      .free = vfree,
+  };
 }
 
 static uint32_t create_pixel(void *data, const vertex *inv) {
-  pixel_shader_data *px = (pixel_shader_data *)data;
+  texture_shader_data *px = (texture_shader_data *)data;
   mvertex in = get_sd(inv, vec2);
 
   return surface_get_pixel(
@@ -82,14 +90,14 @@ static uint32_t create_pixel(void *data, const vertex *inv) {
       (int)MIN(in.tc->y * ((float)px->sf.height) + 0.5f, px->tex_yclamp));
 }
 
-void pixel_bind_texture(pixel_shader_data *px, const char *file_name) {
+void pixel_bind_texture(texture_shader_data *px, const char *file_name) {
   px->sf = surface_from_file(file_name);
   px->tex_xclamp = ((float)px->sf.width) - 1.0f;
   px->tex_yclamp = ((float)px->sf.height) - 1.0f;
 }
 
-pixel_shader tex_ps_create() {
-  pixel_shader_data *d = malloc(sizeof(pixel_shader_data));
+pixel_shader texture_shader_create() {
+  texture_shader_data *d = malloc(sizeof(texture_shader_data));
   return (pixel_shader){
       .create_pixel = create_pixel,
       .shader_data = d,

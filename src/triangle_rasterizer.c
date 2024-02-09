@@ -2,7 +2,7 @@
 #include "pipeline.h"
 #include "shaders/vertex.h"
 #include <math.h>
-
+;
 static void draw_flat(renderer *rn, const vertex *v1, const vertex *v2,
                       const vertex *v3, const vertex *dv1, const vertex *dv2,
                       vertex it_edge1, surface *tex, const pipeline *p);
@@ -34,7 +34,7 @@ void triangle_rasterizer_draw(renderer *rn, triangle tr, surface *tex,
     draw_flat_bot(rn, v1, v2, v3, tex, p);
   } else {
     const float alphaSplit = (v2->pos.y - v1->pos.y) / (v3->pos.y - v1->pos.y);
-    const vertex vi = v1->interpolate_to(v1, v3, alphaSplit);
+    vertex vi = v1->interpolate_to(v1, v3, alphaSplit);
 
     if (v2->pos.x < vi.pos.x) {
       draw_flat_bot(rn, v1, v2, &vi, tex, p);
@@ -43,6 +43,7 @@ void triangle_rasterizer_draw(renderer *rn, triangle tr, surface *tex,
       draw_flat_bot(rn, v1, &vi, v2, tex, p);
       draw_flat_top(rn, &vi, v2, v3, tex, p);
     }
+    vi.free(&vi);
   }
 }
 
@@ -58,7 +59,13 @@ static void draw_flat_top(renderer *rn, const vertex *v1, const vertex *v2,
   v2->sub(&dv1, v2);
   dv1.div(&dv1, delta_y);
 
-  draw_flat(rn, v1, v2, v3, &dv0, &dv1, v2->copy(v2), tex, p);
+  vertex v2_c = v2->copy(v2);
+
+  draw_flat(rn, v1, v2, v3, &dv0, &dv1, v2_c, tex, p);
+
+  dv0.free(&dv0);
+  dv1.free(&dv1);
+  v2_c.free(&v2_c);
 }
 
 static void draw_flat_bot(renderer *rn, const vertex *v1, const vertex *v2,
@@ -73,7 +80,12 @@ static void draw_flat_bot(renderer *rn, const vertex *v1, const vertex *v2,
   dv1.sub(&dv1, v1);
   dv1.div(&dv1, delta_y);
 
-  draw_flat(rn, v1, v2, v3, &dv0, &dv1, v1->copy(v1), tex, p);
+  vertex v1_c = v1->copy(v1);
+
+  draw_flat(rn, v1, v2, v3, &dv0, &dv1, v1_c, tex, p);
+  dv0.free(&dv0);
+  dv1.free(&dv1);
+  v1_c.free(&v1_c);
 }
 
 static void draw_flat(renderer *rn, const vertex *v1, const vertex *v2,
@@ -114,5 +126,11 @@ static void draw_flat(renderer *rn, const vertex *v1, const vertex *v2,
           rn, x, y,
           p->effect.ps.create_pixel(p->effect.ps.shader_data, &i_line));
     }
+    i_line.free(&i_line);
+    di_line.free(&di_line);
+    di_line_c.free(&di_line_c);
   }
+  dv1_c.free(&dv1_c);
+  dv2_c.free(&dv2_c);
+  it_edge0.free(&it_edge0);
 }

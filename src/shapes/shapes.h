@@ -17,7 +17,4 @@ typedef struct shape {
 shape cube_create(float size);
 shape cube_folded_create(float size);
 
-vector *shape_copy_verts(vector *model);
-vector *shape_copy_verts_tex(vector *model);
-
 #endif
