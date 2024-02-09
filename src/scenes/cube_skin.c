@@ -9,7 +9,7 @@ pipeline pip;
 screen_transformer st;
 static vec3 rotation = {0.0f, 0.0f, 0.0f};
 static float z_offset = 2.0f;
-static indexed_triangle_list_tex vt;
+static indexed_triangle_list vt;
 
 static void update(keyboard *kbd, double dt) {
   if (kbd_key_is_pressed(kbd, KB_KEY_Q)) {
@@ -47,8 +47,13 @@ scene scene_solid_cube_create(renderer *rn) {
   st = st_create(WINDOW_WIDTH, WINDOW_HEIGHT);
   shape c = cube_create(1.0f);
   vt = c.get_skinned(&c);
+  pixel_shader ps = tex_ps_create();
+  pixel_bind_texture(ps.shader_data, "assets/office_skin.png");
   pip = pipeline_create(rn);
-  pipeline_bind_texture(&pip, "assets/office_skin.png");
+
+  pip.effect = (effect){
+      .ps = ps,
+  };
 
   return (scene){
       .update = update,

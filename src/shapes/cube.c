@@ -1,4 +1,4 @@
-#include "../vertex.h"
+#include "../shaders/vertex.h"
 #include "shapes.h"
 #include "vector.h"
 #include <notstd.h>
@@ -14,12 +14,13 @@ static int t_buffer[36] = {0, 2,  1,  2, 3,  1, 4,  8, 5, 5,  8, 9,
                            2, 6,  3,  3, 6,  7, 4,  5, 7, 4,  7, 6,
                            2, 10, 11, 2, 11, 6, 12, 3, 7, 12, 7, 13};
 
-static indexed_triangle_list_tex get_skinned(shape *sh) {
-  return (indexed_triangle_list_tex){
+static indexed_triangle_list get_skinned(shape *sh) {
+  return (indexed_triangle_list){
       .vertices = sh->vertices,
       .indices = t_buffer,
   };
 }
+
 static vec2 convert_tex_coords(float u, float v) {
   return (vec2){(u + 1.0f) / 3.0f, v / 4.0f};
 }
@@ -71,7 +72,7 @@ shape cube_create(float size) {
   tc_buffer[13] = convert_tex_coords(-1.0f, 2.0f);
 
   for (size_t i = 0; i < 14; i++) {
-    tv_buffer[i] = (vertex){.tc = tc_buffer[i], .pos = v_buffer[i]};
+    tv_buffer[i] = tex_vertex_create(v_buffer[i], &tc_buffer[i]);
     vector_push_back(tv, &tv_buffer[i]);
   }
 

@@ -1,15 +1,11 @@
 #include "pipeline.h"
 #include "app.h"
-#include "helpers/debug_info.h"
 #include "mat3.h"
 #include "screen_transformer.h"
-#include "surface.h"
 #include "triangle_rasterizer.h"
 #include "vec3.h"
 #include "vector.h"
-#include "vertex.h"
 #include <assert.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 static void process_vertices(pipeline *p, const vector *verts, const int *inds,
@@ -24,7 +20,7 @@ pipeline pipeline_create(renderer *rn) {
   return (pipeline){.rn = rn, .st = st_create(WINDOW_WIDTH, WINDOW_HEIGHT)};
 }
 
-void pipeline_draw(pipeline *p, indexed_triangle_list_tex *tri_list) {
+void pipeline_draw(pipeline *p, indexed_triangle_list *tri_list) {
   // TODO: indexed_triangle_list_tex is not it
   process_vertices(p, tri_list->vertices, tri_list->indices, 36);
 }
@@ -35,10 +31,6 @@ void pipeline_bind_rotation(pipeline *p, const mat3 *rotation_in) {
 
 void pipeline_bind_translation(pipeline *p, const vec3 *translation_in) {
   p->translation = *translation_in;
-}
-
-void pipeline_bind_texture(pipeline *p, const char *file_name) {
-  p->tex = surface_from_file(file_name);
 }
 
 static void process_vertices(pipeline *p, const vector *verts, const int *inds,
@@ -54,7 +46,8 @@ static void process_vertices(pipeline *p, const vector *verts, const int *inds,
     vec3_add(&pos_rot, &p->translation);
 
     vertex *new_vertex = malloc(sizeof(vertex));
-    *new_vertex = (vertex){.pos = pos_rot, .tc = data[i]->tc};
+    *new_vertex = (vertex){.pos = pos_rot, .sd = data[i]->sd};
+    *new_vertex = data[i]->copy(new_vertex);
 
     vector_push_back(verts_out, new_vertex);
   }
@@ -95,5 +88,5 @@ static void post_process_tverts(pipeline *p, triangle tr) {
   st_transform(&p->st, &tr.v1.pos);
   st_transform(&p->st, &tr.v2.pos);
 
-  triangle_rasterizer_draw(p->rn, tr, &p->tex);
+  triangle_rasterizer_draw(p->rn, tr, &p->tex, p);
 }

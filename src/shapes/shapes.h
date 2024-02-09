@@ -7,21 +7,10 @@
 typedef struct {
   vector *vertices;
   int *indices;
-} indexed_line_list;
-
-typedef struct {
-  vector *vertices;
-  int *indices;
-  bool *cull_flags;
 } indexed_triangle_list;
 
-typedef struct {
-  vector *vertices;
-  int *indices;
-} indexed_triangle_list_tex;
-
 typedef struct shape {
-  indexed_triangle_list_tex (*get_skinned)(struct shape *sh);
+  indexed_triangle_list (*get_skinned)(struct shape *sh);
   vector *vertices;
 } shape;
 

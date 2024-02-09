@@ -3,6 +3,7 @@
 
 #include "pipeline.h"
 
-void triangle_rasterizer_draw(renderer *rn, triangle tr, surface *tex);
+void triangle_rasterizer_draw(renderer *rn, triangle tr, surface *tex,
+                              const pipeline *p);
 
 #endif
