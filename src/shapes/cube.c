@@ -3,13 +3,8 @@
 #include "vector.h"
 #include <notstd.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
-static vec3 v_buffer[14];
-static vec3 vi_buffer[14];
-static vec2 tc_buffer[14];
-static vec3 c_buffer[14];
-static vertex tv_buffer[14];
-static vertex tvi_buffer[8];
 static int i_buffer[24] = {0, 1, 1, 3, 3, 2, 2, 0, 0, 4, 1, 5,
                            3, 7, 2, 6, 4, 5, 5, 7, 7, 6, 6, 4};
 
@@ -21,103 +16,110 @@ static int t_buffer_p[36] = {0, 2, 1, 2, 3, 1, 1, 3, 5, 3, 7, 5,
                              2, 6, 3, 3, 6, 7, 4, 5, 7, 4, 7, 6,
                              0, 4, 2, 2, 4, 6, 0, 1, 4, 1, 5, 4};
 
-static indexed_triangle_list get_plain(shape *sh) {
-  return (indexed_triangle_list){
-      .vertices = sh->vertices_p,
-      .indices = t_buffer_p,
-  };
-}
-
-static indexed_triangle_list get_skinned(shape *sh) {
-  return (indexed_triangle_list){
-      .vertices = sh->vertices,
-      .indices = t_buffer,
-  };
-}
-
 static vec2 convert_tex_coords(float u, float v) {
   return (vec2){(u + 1.0f) / 3.0f, v / 4.0f};
 }
 
-shape cube_create(float size) {
-  const float side = size / 2.0f;
-
-  vector *tv = vector_create(14);
-  v_buffer[0] = (vec3){-side, -side, -side};
-  tc_buffer[0] = convert_tex_coords(1.0f, 0.0f);
-
-  v_buffer[1] = (vec3){side, -side, -side};
-  tc_buffer[1] = convert_tex_coords(0.0f, 0.0f);
-
-  v_buffer[2] = (vec3){-side, side, -side};
-  tc_buffer[2] = convert_tex_coords(1.0f, 1.0f);
-
-  v_buffer[3] = (vec3){side, side, -side};
-  tc_buffer[3] = convert_tex_coords(0.0f, 1.0f);
-
-  v_buffer[4] = (vec3){-side, -side, side};
-  tc_buffer[4] = convert_tex_coords(1.0f, 3.0f);
-
-  v_buffer[5] = (vec3){side, -side, side};
-  tc_buffer[5] = convert_tex_coords(0.0f, 3.0f);
-
-  v_buffer[6] = (vec3){-side, side, side};
-  tc_buffer[6] = convert_tex_coords(1.0f, 2.0f);
-
-  v_buffer[7] = (vec3){side, side, side};
-  tc_buffer[7] = convert_tex_coords(0.0f, 2.0f);
-
-  v_buffer[8] = (vec3){-side, -side, -side};
-  tc_buffer[8] = convert_tex_coords(1.0f, 4.0f);
-
-  v_buffer[9] = (vec3){side, -side, -side};
-  tc_buffer[9] = convert_tex_coords(0.0f, 4.0f);
-
-  v_buffer[10] = (vec3){-side, -side, -side};
-  tc_buffer[10] = convert_tex_coords(2.0f, 1.0f);
-
-  v_buffer[11] = (vec3){-side, -side, side};
-  tc_buffer[11] = convert_tex_coords(2.0f, 2.0f);
-
-  v_buffer[12] = (vec3){side, -side, -side};
-  tc_buffer[12] = convert_tex_coords(-1.0f, 1.0f);
-
-  v_buffer[13] = (vec3){side, -side, side};
-  tc_buffer[13] = convert_tex_coords(-1.0f, 2.0f);
-
-  for (size_t i = 0; i < 14; i++) {
-    tv_buffer[i] = tex_vertex_create(v_buffer[i], &tc_buffer[i]);
-    vector_push_back(tv, &tv_buffer[i]);
-  }
-
-  return (shape){.get_skinned = get_skinned, .vertices = tv};
-}
-
-shape cube_create_plain(float size) {
+indexed_triangle_list cube_create_skinned(float size) {
   const float side = size / 2.0f;
 
   vector *v = vector_create(14);
-  vi_buffer[0] = (vec3){-side, -side, -side};
-  c_buffer[0] = (vec3){0x00, 0x00, 0x00};
-  vi_buffer[1] = (vec3){side, -side, -side};
-  c_buffer[1] = (vec3){0xFF, 0x00, 0x00};
-  vi_buffer[2] = (vec3){-side, side, -side};
-  c_buffer[2] = (vec3){0x00, 0xFF, 0x00};
-  vi_buffer[3] = (vec3){side, side, -side};
-  c_buffer[3] = (vec3){0xFF, 0xFF, 0x00};
-  vi_buffer[4] = (vec3){-side, -side, side};
-  c_buffer[4] = (vec3){0x00, 0x00, 0xFF};
-  vi_buffer[5] = (vec3){side, -side, side};
-  c_buffer[5] = (vec3){0xFF, 0x00, 0xFF};
-  vi_buffer[6] = (vec3){-side, side, side};
-  c_buffer[6] = (vec3){0x00, 0xFF, 0xFF};
-  vi_buffer[7] = (vec3){side, side, side};
-  c_buffer[7] = (vec3){0xFF, 0xFF, 0xFF};
+  vector *t = vector_create(14);
 
-  for (size_t i = 0; i < 8; i++) {
-    tvi_buffer[i] = color_vertex_create(vi_buffer[i], &c_buffer[i]);
-    vector_push_back(v, &tvi_buffer[i]);
+  for (size_t i = 0; i < 14; i++) {
+    vector_push_back(v, malloc(sizeof(vec3)));
+    vector_push_back(t, malloc(sizeof(vec2)));
   }
 
-  return (shape){.get_skinned = get_plain, .vertices_p = v};
+  vec3 **v_data = (vec3 **)vector_get_data(v);
+  vec2 **t_data = (vec2 **)vector_get_data(t);
+
+  *v_data[0] = (vec3){-side, -side, -side};
+  *t_data[0] = convert_tex_coords(1.0f, 0.0f);
+
+  *v_data[1] = (vec3){side, -side, -side};
+  *t_data[1] = convert_tex_coords(0.0f, 0.0f);
+
+  *v_data[2] = (vec3){-side, side, -side};
+  *t_data[2] = convert_tex_coords(1.0f, 1.0f);
+
+  *v_data[3] = (vec3){side, side, -side};
+  *t_data[3] = convert_tex_coords(0.0f, 1.0f);
+
+  *v_data[4] = (vec3){-side, -side, side};
+  *t_data[4] = convert_tex_coords(1.0f, 3.0f);
+
+  *v_data[5] = (vec3){side, -side, side};
+  *t_data[5] = convert_tex_coords(0.0f, 3.0f);
+
+  *v_data[6] = (vec3){-side, side, side};
+  *t_data[6] = convert_tex_coords(1.0f, 2.0f);
+
+  *v_data[7] = (vec3){side, side, side};
+  *t_data[7] = convert_tex_coords(0.0f, 2.0f);
+
+  *v_data[8] = (vec3){-side, -side, -side};
+  *t_data[8] = convert_tex_coords(1.0f, 4.0f);
+
+  *v_data[9] = (vec3){side, -side, -side};
+  *t_data[9] = convert_tex_coords(0.0f, 4.0f);
+
+  *v_data[10] = (vec3){-side, -side, -side};
+  *t_data[10] = convert_tex_coords(2.0f, 1.0f);
+
+  *v_data[11] = (vec3){-side, -side, side};
+  *t_data[11] = convert_tex_coords(2.0f, 2.0f);
+
+  *v_data[12] = (vec3){side, -side, -side};
+  *t_data[12] = convert_tex_coords(-1.0f, 1.0f);
+
+  *v_data[13] = (vec3){side, -side, side};
+  *t_data[13] = convert_tex_coords(-1.0f, 2.0f);
+
+  vector *vertices = vector_create(14);
+
+  for (size_t i = 0; i < 14; i++) {
+    vertex *new_vert = malloc(sizeof(vertex));
+    *new_vert = tex_vertex_create(*v_data[i], t_data[i]);
+    vector_push_back(vertices, new_vert);
+  }
+
+  return (indexed_triangle_list){
+      .vertices = vertices,
+      .indices = t_buffer,
+  };
+}
+
+indexed_triangle_list cube_create_plain(float size) {
+  const float side = size / 2.0f;
+
+  vector *v = vector_create(8);
+
+  for (size_t i = 0; i < 8; i++) {
+    vector_push_back(v, malloc(sizeof(vec3)));
+  }
+
+  vec3 **v_data = (vec3 **)vector_get_data(v);
+
+  *v_data[0] = (vec3){-side, -side, -side};
+  *v_data[1] = (vec3){side, -side, -side};
+  *v_data[2] = (vec3){-side, side, -side};
+  *v_data[3] = (vec3){side, side, -side};
+  *v_data[4] = (vec3){-side, -side, side};
+  *v_data[5] = (vec3){side, -side, side};
+  *v_data[6] = (vec3){-side, side, side};
+  *v_data[7] = (vec3){side, side, side};
+
+  vector *vertices = vector_create(8);
+
+  for (size_t i = 0; i < 8; i++) {
+    vertex *new_vert = malloc(sizeof(vertex));
+    *new_vert = tex_vertex_create(*v_data[i], NULL);
+    vector_push_back(vertices, new_vert);
+  }
+
+  return (indexed_triangle_list){
+      .vertices = vertices,
+      .indices = t_buffer_p,
+  };
 }

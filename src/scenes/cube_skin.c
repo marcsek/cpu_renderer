@@ -1,12 +1,9 @@
-#include "../app.h"
 #include "../pipeline.h"
-#include "../screen_transformer.h"
 #include "../shapes/shapes.h"
 #include "scene.h"
 #include <MiniFB.h>
 
 static pipeline pip;
-static screen_transformer st;
 static vec3 rotation = {0.0f, 0.0f, 0.0f};
 static float z_offset = 2.0f;
 static indexed_triangle_list vt;
@@ -44,9 +41,7 @@ static void render(renderer *rn) {
 }
 
 scene scene_solid_cube_create(renderer *rn) {
-  st = st_create(WINDOW_WIDTH, WINDOW_HEIGHT);
-  shape c = cube_create(1.0f);
-  vt = c.get_skinned(&c);
+  vt = cube_create_skinned(1.0f);
 
   pixel_shader ps = texture_shader_create();
   texture_shader_bind_texture(ps.shader_data, "assets/office_skin.png");

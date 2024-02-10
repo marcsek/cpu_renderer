@@ -9,14 +9,7 @@ typedef struct {
   int *indices;
 } indexed_triangle_list;
 
-typedef struct shape {
-  indexed_triangle_list (*get_skinned)(struct shape *sh);
-  vector *vertices;
-  vector *vertices_p;
-} shape;
-
-shape cube_create(float size);
-shape cube_create_plain(float size);
-shape cube_folded_create(float size);
+indexed_triangle_list cube_create_skinned(float size);
+indexed_triangle_list cube_create_plain(float size);
 
 #endif
