@@ -27,6 +27,8 @@ static void update(keyboard *kbd, double dt) {
 }
 
 static void render(renderer *rn) {
+  pipeline_begin_frame(&pip);
+
   mat3 rot_x = mat3_rotationX(rotation.x);
   mat3 rot_y = mat3_rotationY(rotation.y);
   mat3 rot_z = mat3_rotationZ(rotation.z);
@@ -40,7 +42,7 @@ static void render(renderer *rn) {
   pipeline_draw(&pip, &vt);
 }
 
-scene scene_solid_cube_create(renderer *rn) {
+scene scene_cube_skin_create(renderer *rn) {
   vt = cube_create_skinned(1.0f);
 
   pixel_shader ps = texture_shader_create();

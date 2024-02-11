@@ -6,6 +6,7 @@
 #include "triangle_rasterizer.h"
 #include "vec3.h"
 #include "vector.h"
+#include "z_buffer.h"
 #include <assert.h>
 #include <stdlib.h>
 
@@ -24,9 +25,13 @@ void verts_cf(void *to_free) {
 }
 
 pipeline pipeline_create(renderer *rn, effect ef) {
-  return (pipeline){
-      .rn = rn, .st = st_create(WINDOW_WIDTH, WINDOW_HEIGHT), .effect = ef};
+  return (pipeline){.rn = rn,
+                    .st = st_create(WINDOW_WIDTH, WINDOW_HEIGHT),
+                    .effect = ef,
+                    .zb = z_buffer_create(WINDOW_WIDTH, WINDOW_HEIGHT)};
 }
+
+void pipeline_begin_frame(pipeline *p) { z_buffer_clear(&p->zb); }
 
 void pipeline_draw(pipeline *p, indexed_triangle_list *tri_list) {
   // TODO: indexed_triangle_list_tex is not it

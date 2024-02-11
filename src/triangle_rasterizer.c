@@ -1,6 +1,7 @@
 #include "triangle_rasterizer.h"
 #include "pipeline.h"
 #include "shaders/vertex.h"
+#include "z_buffer.h"
 #include <math.h>
 
 static void draw_flat(renderer *rn, const vertex *v1, const vertex *v2,
@@ -123,14 +124,17 @@ static void draw_flat(renderer *rn, const vertex *v1, const vertex *v2,
 
     for (int x = x_start; x < x_end; x++, vertex_add(&i_line, &di_line)) {
       const float z = 1.0f / i_line.pos.z;
-      vertex i_line_c = vertex_copy(&i_line);
-      vertex_mult(&i_line_c, z);
 
-      renderer_put_pixel(
-          rn, x, y,
-          p->effect.ps.create_pixel(p->effect.ps.shader_data, &i_line_c));
+      if (z_buffer_test_and_set(&p->zb, x, y, z)) {
+        vertex i_line_c = vertex_copy(&i_line);
+        vertex_mult(&i_line_c, z);
 
-      vertex_free(&i_line_c);
+        renderer_put_pixel(
+            rn, x, y,
+            p->effect.ps.create_pixel(p->effect.ps.shader_data, &i_line_c));
+
+        vertex_free(&i_line_c);
+      }
     }
     vertex_free(&i_line);
     vertex_free(&di_line);

@@ -35,8 +35,8 @@ int app_init() {
 
   // **
   scenes[0] = scene_color_cube_create(&rn);
-  scenes[1] = scene_solid_cube_create(&rn);
-  scenes[2] = scene_texture_create(&rn);
+  scenes[1] = scene_cube_skin_create(&rn);
+  scenes[2] = scene_overlap_cube_create(&rn);
   // **
 
   return 0;
