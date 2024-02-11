@@ -3,9 +3,7 @@
 
 #include <notstd.h>
 
-typedef struct vertex {
-  vec3 pos;
-  void *sd;
+typedef struct {
   struct vertex (*copy)(const struct vertex *v);
   void (*add)(struct vertex *v0, const struct vertex *v1);
   void (*sub)(struct vertex *v0, const struct vertex *v1);
@@ -14,8 +12,24 @@ typedef struct vertex {
   struct vertex (*interpolate_to)(const struct vertex *tv,
                                   const struct vertex *inter_to, float alpha);
   void (*free)(struct vertex *v);
+} vertex_funcs;
+
+typedef struct vertex {
+  vec3 pos;
+  void *sd;
+  vertex_funcs *fn;
 } vertex;
 
+struct vertex vertex_copy(const struct vertex *v);
+void vertex_add(struct vertex *v0, const struct vertex *v1);
+void vertex_sub(struct vertex *v0, const struct vertex *v1);
+void vertex_mult(struct vertex *v0, float rhs);
+void vertex_div(struct vertex *v0, float rhs);
+struct vertex vertex_interpolate_to(const struct vertex *tv,
+                                    const struct vertex *inter_to, float alpha);
+void vertex_free(struct vertex *v);
+
+// Contructors for each shader effect
 vertex tex_vertex_create(vec3 pos, void *sd);
 vertex color_vertex_create(vec3 pos, void *sd);
 

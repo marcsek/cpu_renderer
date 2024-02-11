@@ -1,8 +1,8 @@
 #include "pipeline.h"
 #include "app.h"
-#include "helpers/debug_info.h"
 #include "mat3.h"
 #include "screen_transformer.h"
+#include "shaders/vertex.h"
 #include "triangle_rasterizer.h"
 #include "vec3.h"
 #include "vector.h"
@@ -19,7 +19,7 @@ static void post_process_tverts(pipeline *p, triangle tr);
 
 void verts_cf(void *to_free) {
   vertex *to_free_v = (vertex *)to_free;
-  to_free_v->free(to_free_v);
+  vertex_free(to_free_v);
   free(to_free_v);
 }
 
@@ -54,8 +54,9 @@ static void process_vertices(pipeline *p, const vector *verts, const int *inds,
     vec3_add(&pos_rot, &p->translation);
 
     vertex *new_vertex = malloc(sizeof(vertex));
-    *new_vertex = (vertex){.pos = pos_rot, .sd = data[i]->sd};
-    *new_vertex = data[i]->copy(new_vertex);
+    *new_vertex =
+        (vertex){.pos = pos_rot, .sd = data[i]->sd, .fn = data[i]->fn};
+    *new_vertex = vertex_copy(new_vertex);
 
     vector_push_back(verts_out, new_vertex);
   }
@@ -89,13 +90,13 @@ static void assemble_triangles(pipeline *p, const vector *verts,
 
 static void process_triangles(pipeline *p, const vertex *v0, const vertex *v1,
                               const vertex *v2) {
-  vertex v0_c = v0->copy(v0);
-  vertex v1_c = v1->copy(v1);
-  vertex v2_c = v2->copy(v2);
+  vertex v0_c = vertex_copy(v0);
+  vertex v1_c = vertex_copy(v1);
+  vertex v2_c = vertex_copy(v2);
   post_process_tverts(p, (triangle){v0_c, v1_c, v2_c});
-  v0_c.free(&v0_c);
-  v1_c.free(&v1_c);
-  v2_c.free(&v2_c);
+  vertex_free(&v0_c);
+  vertex_free(&v1_c);
+  vertex_free(&v2_c);
 }
 
 static void post_process_tverts(pipeline *p, triangle tr) {

@@ -72,17 +72,21 @@ static void vfree(vertex *v) {
   free(vm.tc);
 }
 
+static vertex_funcs fns = (vertex_funcs){
+    .interpolate_to = interpolate_to,
+    .copy = copy,
+    .add = add,
+    .sub = sub,
+    .mult = mult,
+    .div = divd,
+    .free = vfree,
+};
+
 vertex tex_vertex_create(vec3 pos, void *sd) {
   return (vertex){
       .pos = pos,
       .sd = sd,
-      .interpolate_to = interpolate_to,
-      .copy = copy,
-      .add = add,
-      .sub = sub,
-      .mult = mult,
-      .div = divd,
-      .free = vfree,
+      .fn = &fns,
   };
 }
 
