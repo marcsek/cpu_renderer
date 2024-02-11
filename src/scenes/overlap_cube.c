@@ -37,8 +37,8 @@ static void render(renderer *rn) {
 
     const vec3 trans = {.z = 2.0f};
 
-    pipeline_bind_rotation(&pip, &rot_matrix);
-    pipeline_bind_translation(&pip, &trans);
+    pip.effect.vs.bind_rotation(&pip.effect.vs, rot_matrix);
+    pip.effect.vs.bind_translation(&pip.effect.vs, trans);
     pipeline_draw(&pip, &v);
   }
   {
@@ -50,8 +50,8 @@ static void render(renderer *rn) {
 
     const vec3 trans = {.z = z_offset};
 
-    pipeline_bind_rotation(&pip, &rot_matrix);
-    pipeline_bind_translation(&pip, &trans);
+    pip.effect.vs.bind_rotation(&pip.effect.vs, rot_matrix);
+    pip.effect.vs.bind_translation(&pip.effect.vs, trans);
     pipeline_draw(&pip, &v);
   }
 }
@@ -76,7 +76,8 @@ scene scene_overlap_cube_create(renderer *rn) {
   *(vec3 *)d[7]->sd = (vec3){0xFF, 0xFF, 0xFF};
 
   pixel_shader ps = color_shader_create();
-  effect ef = (effect){ps};
+  vertex_shader vs = default_vertex_create();
+  effect ef = (effect){ps, vs};
   pip = pipeline_create(rn, ef);
 
   return (scene){

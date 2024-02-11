@@ -1,6 +1,5 @@
 #include "pipeline.h"
 #include "app.h"
-#include "mat3.h"
 #include "screen_transformer.h"
 #include "shaders/vertex.h"
 #include "triangle_rasterizer.h"
@@ -38,14 +37,6 @@ void pipeline_draw(pipeline *p, indexed_triangle_list *tri_list) {
   process_vertices(p, tri_list->vertices, tri_list->indices, 36);
 }
 
-void pipeline_bind_rotation(pipeline *p, const mat3 *rotation_in) {
-  p->rotation = *rotation_in;
-}
-
-void pipeline_bind_translation(pipeline *p, const vec3 *translation_in) {
-  p->translation = *translation_in;
-}
-
 static void process_vertices(pipeline *p, const vector *verts, const int *inds,
                              size_t i_len) {
   size_t verts_size = vector_get_size(verts);
@@ -55,13 +46,11 @@ static void process_vertices(pipeline *p, const vector *verts, const int *inds,
   assert(verts_size != 0);
 
   for (size_t i = 0; i < verts_size; i++) {
-    vec3 pos_rot = mat3_mult_vec3(&p->rotation, &data[i]->pos);
-    vec3_add(&pos_rot, &p->translation);
-
     vertex *new_vertex = malloc(sizeof(vertex));
     *new_vertex =
-        (vertex){.pos = pos_rot, .sd = data[i]->sd, .fn = data[i]->fn};
-    *new_vertex = vertex_copy(new_vertex);
+        (vertex){.pos = data[i]->pos, .sd = data[i]->sd, .fn = data[i]->fn};
+
+    *new_vertex = p->effect.vs.transform(p->effect.vs.shader_data, new_vertex);
 
     vector_push_back(verts_out, new_vertex);
   }

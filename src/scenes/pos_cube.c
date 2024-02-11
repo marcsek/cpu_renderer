@@ -43,26 +43,11 @@ static void render(renderer *rn) {
   pipeline_draw(&pip, &v);
 }
 
-scene scene_color_cube_create(renderer *rn) {
+scene pos_cube_create(renderer *rn) {
   v = cube_create_plain(1.0f);
-  vertex **d = (vertex **)vector_get_data(v.vertices);
-
-  for (size_t i = 0; i < 8; i++) {
-    vec3 *c = malloc(sizeof(vec3));
-    d[i]->sd = c;
-  }
-
-  *(vec3 *)d[0]->sd = (vec3){0x00, 0x00, 0x00};
-  *(vec3 *)d[1]->sd = (vec3){0xFF, 0x00, 0x00};
-  *(vec3 *)d[2]->sd = (vec3){0x00, 0xFF, 0x00};
-  *(vec3 *)d[3]->sd = (vec3){0xFF, 0xFF, 0x00};
-  *(vec3 *)d[4]->sd = (vec3){0x00, 0x00, 0xFF};
-  *(vec3 *)d[5]->sd = (vec3){0xFF, 0x00, 0xFF};
-  *(vec3 *)d[6]->sd = (vec3){0x00, 0xFF, 0xFF};
-  *(vec3 *)d[7]->sd = (vec3){0xFF, 0xFF, 0xFF};
 
   pixel_shader ps = color_shader_create();
-  vertex_shader vs = default_vertex_create();
+  vertex_shader vs = position_vertex_create();
   effect ef = (effect){ps, vs};
   pip = pipeline_create(rn, ef);
 
