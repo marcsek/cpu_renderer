@@ -1,5 +1,6 @@
 #include "pipeline.h"
 #include "app.h"
+#include "helpers/debug_info.h"
 #include "mat3.h"
 #include "screen_transformer.h"
 #include "triangle_rasterizer.h"
@@ -88,13 +89,19 @@ static void assemble_triangles(pipeline *p, const vector *verts,
 
 static void process_triangles(pipeline *p, const vertex *v0, const vertex *v1,
                               const vertex *v2) {
-  post_process_tverts(p, (triangle){*v0, *v1, *v2});
+  vertex v0_c = v0->copy(v0);
+  vertex v1_c = v1->copy(v1);
+  vertex v2_c = v2->copy(v2);
+  post_process_tverts(p, (triangle){v0_c, v1_c, v2_c});
+  v0_c.free(&v0_c);
+  v1_c.free(&v1_c);
+  v2_c.free(&v2_c);
 }
 
 static void post_process_tverts(pipeline *p, triangle tr) {
-  st_transform(&p->st, &tr.v0.pos);
-  st_transform(&p->st, &tr.v1.pos);
-  st_transform(&p->st, &tr.v2.pos);
+  st_transform(&p->st, &tr.v0);
+  st_transform(&p->st, &tr.v1);
+  st_transform(&p->st, &tr.v2);
 
   triangle_rasterizer_draw(p->rn, tr, &p->tex, p);
 }

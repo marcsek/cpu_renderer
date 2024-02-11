@@ -1,7 +1,7 @@
 #ifndef APP_H
 #define APP_H
 
-#define TARGET_FPS 120
+#define TARGET_FPS 0
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 640
 #define WINDOW_NAME "Graphics"

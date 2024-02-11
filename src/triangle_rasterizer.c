@@ -2,6 +2,7 @@
 #include "pipeline.h"
 #include "shaders/vertex.h"
 #include <math.h>
+#include <stdio.h>
 ;
 static void draw_flat(renderer *rn, const vertex *v1, const vertex *v2,
                       const vertex *v3, const vertex *dv1, const vertex *dv2,
@@ -122,9 +123,15 @@ static void draw_flat(renderer *rn, const vertex *v1, const vertex *v2,
     i_line.add(&i_line, &di_line_c);
 
     for (int x = x_start; x < x_end; x++, i_line.add(&i_line, &di_line)) {
+      const float z = 1.0f / i_line.pos.z;
+      vertex i_line_c = i_line.copy(&i_line);
+      i_line_c.mult(&i_line_c, z);
+
       renderer_put_pixel(
           rn, x, y,
-          p->effect.ps.create_pixel(p->effect.ps.shader_data, &i_line));
+          p->effect.ps.create_pixel(p->effect.ps.shader_data, &i_line_c));
+
+      i_line_c.free(&i_line_c);
     }
     i_line.free(&i_line);
     di_line.free(&di_line);

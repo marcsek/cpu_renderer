@@ -114,7 +114,7 @@ indexed_triangle_list cube_create_plain(float size) {
 
   for (size_t i = 0; i < 8; i++) {
     vertex *new_vert = malloc(sizeof(vertex));
-    *new_vert = tex_vertex_create(*v_data[i], NULL);
+    *new_vert = color_vertex_create(*v_data[i], NULL);
     vector_push_back(vertices, new_vert);
   }
 
