@@ -7,12 +7,13 @@
 #include "vector.h"
 #include "z_buffer.h"
 #include <assert.h>
+#include <stdio.h>
 #include <stdlib.h>
 
-static void process_vertices(pipeline *p, const vector *verts, const int *inds,
-                             size_t i_len);
+static void process_vertices(pipeline *p, const vector *verts,
+                             const vector *inds);
 static void assemble_triangles(pipeline *p, const vector *verts,
-                               const int *inds, size_t i_len);
+                               const vector *inds);
 static void process_triangles(pipeline *p, const vertex *v0, const vertex *v1,
                               const vertex *v2);
 static void post_process_tverts(pipeline *p, triangle tr);
@@ -33,12 +34,11 @@ pipeline pipeline_create(renderer *rn, effect ef) {
 void pipeline_begin_frame(pipeline *p) { z_buffer_clear(&p->zb); }
 
 void pipeline_draw(pipeline *p, indexed_triangle_list *tri_list) {
-  // TODO: indexed_triangle_list_tex is not it
-  process_vertices(p, tri_list->vertices, tri_list->indices, 36);
+  process_vertices(p, tri_list->vertices, tri_list->indices);
 }
 
-static void process_vertices(pipeline *p, const vector *verts, const int *inds,
-                             size_t i_len) {
+static void process_vertices(pipeline *p, const vector *verts,
+                             const vector *inds) {
   size_t verts_size = vector_get_size(verts);
   vector *verts_out = vector_create_cf(verts_size, verts_cf);
   vertex **data = (vertex **)vector_get_data(verts);
@@ -55,17 +55,19 @@ static void process_vertices(pipeline *p, const vector *verts, const int *inds,
     vector_push_back(verts_out, new_vertex);
   }
 
-  assemble_triangles(p, verts_out, inds, i_len);
+  assemble_triangles(p, verts_out, inds);
   vector_destroy(verts_out);
 }
 
 static void assemble_triangles(pipeline *p, const vector *verts,
-                               const int *inds, size_t i_len) {
+                               const vector *inds) {
   vertex **data = (vertex **)vector_get_data(verts);
-  for (size_t i = 0; i < i_len; i += 3) {
-    vertex *v1 = data[inds[i]];
-    vertex *v2 = data[inds[i + 1]];
-    vertex *v3 = data[inds[i + 2]];
+  int **ind_d = (int **)vector_get_data(inds);
+
+  for (size_t i = 0; i < vector_get_size(inds); i += 3) {
+    vertex *v1 = data[*ind_d[i]];
+    vertex *v2 = data[*ind_d[i + 1]];
+    vertex *v3 = data[*ind_d[i + 2]];
 
     vec3 v2_pos = v2->pos;
     vec3 v3_pos = v3->pos;

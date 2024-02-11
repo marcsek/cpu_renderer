@@ -84,9 +84,16 @@ indexed_triangle_list cube_create_skinned(float size) {
     vector_push_back(vertices, new_vert);
   }
 
+  vector *indices = vector_create(36);
+  for (size_t i = 0; i < 36; i++) {
+    int *ind = malloc(sizeof(int));
+    *ind = t_buffer[i];
+    vector_push_back(indices, ind);
+  }
+
   return (indexed_triangle_list){
       .vertices = vertices,
-      .indices = t_buffer,
+      .indices = indices,
   };
 }
 
@@ -118,8 +125,15 @@ indexed_triangle_list cube_create_plain(float size) {
     vector_push_back(vertices, new_vert);
   }
 
+  vector *indices = vector_create(36);
+  for (size_t i = 0; i < 36; i++) {
+    int *ind = malloc(sizeof(int));
+    *ind = t_buffer_p[i];
+    vector_push_back(indices, ind);
+  }
+
   return (indexed_triangle_list){
       .vertices = vertices,
-      .indices = t_buffer_p,
+      .indices = indices,
   };
 }

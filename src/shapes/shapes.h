@@ -6,10 +6,13 @@
 
 typedef struct {
   vector *vertices;
-  int *indices;
+  vector *indices;
 } indexed_triangle_list;
 
 indexed_triangle_list cube_create_skinned(float size);
 indexed_triangle_list cube_create_plain(float size);
+
+indexed_triangle_list plain_create_plain(int divisions, float size);
+indexed_triangle_list plain_create_skinned(int divisions, float size);
 
 #endif

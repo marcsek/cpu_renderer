@@ -29,6 +29,8 @@ struct vertex vertex_interpolate_to(const struct vertex *tv,
                                     const struct vertex *inter_to, float alpha);
 void vertex_free(struct vertex *v);
 
+vertex vertex_default_create(vec3 pos);
+
 // Contructors for each shader effect
 vertex tex_vertex_create(vec3 pos, void *sd);
 vertex color_vertex_create(vec3 pos, void *sd);

@@ -11,7 +11,7 @@ static window wnd;
 static renderer rn;
 
 // **
-#define SCENE_LEN 4
+#define SCENE_LEN 5
 static scene scenes[SCENE_LEN];
 size_t cur_scene = 0;
 bool did_cycle = false;
@@ -34,10 +34,11 @@ int app_init() {
   mfb_set_target_fps(TARGET_FPS);
 
   // **
-  scenes[0] = scene_color_cube_create(&rn);
-  scenes[1] = scene_cube_skin_create(&rn);
-  scenes[2] = scene_overlap_cube_create(&rn);
-  scenes[3] = pos_cube_create(&rn);
+  scenes[0] = scene_flag_plane_create(&rn);
+  scenes[1] = scene_color_cube_create(&rn);
+  scenes[2] = scene_cube_skin_create(&rn);
+  scenes[3] = scene_overlap_cube_create(&rn);
+  scenes[4] = pos_cube_create(&rn);
   // **
 
   return 0;
