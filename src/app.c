@@ -12,9 +12,9 @@ static window wnd;
 static renderer rn;
 
 // **
-#define SCENE_LEN 6
+#define SCENE_LEN 7
 static scene scenes[SCENE_LEN];
-size_t cur_scene = 2;
+size_t cur_scene = 6;
 bool did_cycle = false;
 // **
 
@@ -41,6 +41,7 @@ int app_init() {
   scenes[3] = scene_cube_skin_create(&rn);
   scenes[4] = scene_overlap_cube_create(&rn);
   scenes[5] = pos_cube_create(&rn);
+  scenes[6] = scene_bunny_create(&rn);
   //      **
 
   return 0;

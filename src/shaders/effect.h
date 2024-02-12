@@ -34,6 +34,8 @@ typedef struct vertex_shader_data vertex_shader_data;
 typedef struct geomtry_shader_data geometry_shader_data;
 
 // Pixel shaders
+pixel_shader default_pixel_create();
+
 pixel_shader texture_shader_create();
 void texture_shader_bind_texture(pixel_shader_data *px, const char *file_name);
 

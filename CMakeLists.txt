@@ -10,6 +10,9 @@ file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/*.c")
 set(SrcVendor
   vendors/stb/stb_include.c
   vendors/stb/stb_image.h
+
+  vendors/tinyobj/tinyobj_include.c
+  vendors/tinyobj/tinyobj_loader_c.h
 )
 
 option(NOTSTD_SET_DEBUG_FLAGS "Set debug flags" FALSE)
