@@ -11,6 +11,7 @@ typedef struct {
 
 scene scene_cube_skin_create(renderer *rn);
 scene scene_color_cube_create(renderer *rn);
+scene scene_solid_face_create(renderer *rn);
 scene scene_overlap_cube_create(renderer *rn);
 scene pos_cube_create(renderer *rn);
 scene scene_flag_plane_create(renderer *rn);

@@ -19,6 +19,9 @@ typedef struct pixel_shader_data {
 
 static vertex copy(const vertex *v) {
   mvertex vm = get_sd(v, vec3);
+  if (v->sd == NULL) {
+    return color_vertex_create(vm.pos, NULL);
+  }
   vec3 *new_v = malloc(sizeof(vec3));
   *new_v = *vm.color;
   return color_vertex_create(vm.pos, new_v);

@@ -12,9 +12,9 @@ static window wnd;
 static renderer rn;
 
 // **
-#define SCENE_LEN 5
+#define SCENE_LEN 6
 static scene scenes[SCENE_LEN];
-size_t cur_scene = 0;
+size_t cur_scene = 2;
 bool did_cycle = false;
 // **
 
@@ -37,9 +37,10 @@ int app_init() {
   // **
   scenes[0] = scene_flag_plane_create(&rn);
   scenes[1] = scene_color_cube_create(&rn);
-  scenes[2] = scene_cube_skin_create(&rn);
-  scenes[3] = scene_overlap_cube_create(&rn);
-  scenes[4] = pos_cube_create(&rn);
+  scenes[2] = scene_solid_face_create(&rn);
+  scenes[3] = scene_cube_skin_create(&rn);
+  scenes[4] = scene_overlap_cube_create(&rn);
+  scenes[5] = pos_cube_create(&rn);
   //      **
 
   return 0;
@@ -77,7 +78,7 @@ void app_mainloop() {
     frame_time = delta * 1000;
     fps = 1.0f / delta;
 
-    // debug_info_output();
+    debug_info_output();
 
   } while (mfb_wait_sync(wnd.mfb_window));
 

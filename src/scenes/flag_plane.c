@@ -52,7 +52,8 @@ scene scene_flag_plane_create(renderer *rn) {
   texture_shader_bind_texture(ps.shader_data, "assets/sunf.png");
 
   vertex_shader vs = wawe_vertex_create();
-  effect ef = (effect){ps, vs};
+  geometry_shader gs = default_geometry_create();
+  effect ef = (effect){ps, vs, gs};
   pip = pipeline_create(rn, ef);
 
   return (scene){

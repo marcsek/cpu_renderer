@@ -12,7 +12,11 @@ set(SrcVendor
   vendors/stb/stb_image.h
 )
 
-set (CMAKE_C_FLAGS "-Wextra -Wall -fsanitize=undefined,address")
+option(NOTSTD_SET_DEBUG_FLAGS "Set debug flags" FALSE)
+
+if(NOTSTD_SET_DEBUG_FLAGS)
+  set (CMAKE_C_FLAGS "-Werror -Wextra -Wall -fsanitize=undefined,address")
+endif()
 
 add_subdirectory(dependencies/minifb)
 add_subdirectory(dependencies/notstd)

@@ -1,7 +1,6 @@
 #include "../pipeline.h"
 #include "../shapes/shapes.h"
 #include "scene.h"
-#include "vector.h"
 #include <MiniFB.h>
 
 static pipeline pip;
@@ -48,7 +47,10 @@ scene pos_cube_create(renderer *rn) {
 
   pixel_shader ps = color_shader_create();
   vertex_shader vs = position_vertex_create();
-  effect ef = (effect){ps, vs};
+  geometry_shader gs = default_geometry_create();
+
+  effect ef = (effect){ps, vs, gs};
+
   pip = pipeline_create(rn, ef);
 
   return (scene){

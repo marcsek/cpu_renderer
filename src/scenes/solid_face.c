@@ -2,11 +2,13 @@
 #include "../shapes/shapes.h"
 #include "scene.h"
 #include <MiniFB.h>
+#include <stdint.h>
+#include <stdlib.h>
 
 static pipeline pip;
 static vec3 rotation = {0.0f, 0.0f, 0.0f};
 static float z_offset = 2.0f;
-static indexed_triangle_list vt;
+static indexed_triangle_list v;
 
 static void update(keyboard *kbd, double dt) {
   if (kbd_key_is_pressed(kbd, KB_KEY_Q)) {
@@ -39,16 +41,25 @@ static void render() {
 
   pip.effect.vs.bind_rotation(&pip.effect.vs, rot_matrix);
   pip.effect.vs.bind_translation(&pip.effect.vs, trans);
-  pipeline_draw(&pip, &vt);
+  pipeline_draw(&pip, &v);
 }
 
-scene scene_cube_skin_create(renderer *rn) {
-  vt = cube_create_skinned(1.0f, tex_vertex_create);
+scene scene_solid_face_create(renderer *rn) {
+  v = cube_create_plain(1.0f, vertex_default_create);
 
-  pixel_shader ps = texture_shader_create();
-  texture_shader_bind_texture(ps.shader_data, "assets/office_skin.png");
+  uint32_t *colors = malloc(6 * sizeof(uint32_t));
+
+  colors[0] = 0xFF1f3c40;
+  colors[1] = 0xFFe35000;
+  colors[2] = 0xFFe1ae0f;
+  colors[3] = 0xFF3d8ebf;
+  colors[4] = 0xFFa3a32f;
+  colors[5] = 0xFF77dd83;
+
+  pixel_shader ps = solid_shader_create();
   vertex_shader vs = default_vertex_create();
-  geometry_shader gs = default_geometry_create();
+  geometry_shader gs = sface_geometry_create();
+  sface_geo_bind_colors(gs.shader_data, colors);
 
   effect ef = (effect){ps, vs, gs};
   pip = pipeline_create(rn, ef);

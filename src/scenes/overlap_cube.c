@@ -78,7 +78,9 @@ scene scene_overlap_cube_create(renderer *rn) {
 
   pixel_shader ps = color_shader_create();
   vertex_shader vs = default_vertex_create();
-  effect ef = (effect){ps, vs};
+  geometry_shader gs = default_geometry_create();
+
+  effect ef = (effect){ps, vs, gs};
   pip = pipeline_create(rn, ef);
 
   return (scene){

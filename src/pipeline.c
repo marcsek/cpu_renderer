@@ -7,7 +7,6 @@
 #include "vector.h"
 #include "z_buffer.h"
 #include <assert.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 static void process_vertices(pipeline *p, const vector *verts,
@@ -15,7 +14,7 @@ static void process_vertices(pipeline *p, const vector *verts,
 static void assemble_triangles(pipeline *p, const vector *verts,
                                const vector *inds);
 static void process_triangles(pipeline *p, const vertex *v0, const vertex *v1,
-                              const vertex *v2);
+                              const vertex *v2, unsigned int index);
 static void post_process_tverts(pipeline *p, triangle tr);
 
 void verts_cf(void *to_free) {
@@ -78,20 +77,21 @@ static void assemble_triangles(pipeline *p, const vector *verts,
     bool should_cull = vec3_dot_prod(&cross, &v1->pos) > 0.0f;
 
     if (!should_cull) {
-      process_triangles(p, v1, v2, v3);
+      process_triangles(p, v1, v2, v3, i / 3);
     }
   }
 }
 
 static void process_triangles(pipeline *p, const vertex *v0, const vertex *v1,
-                              const vertex *v2) {
-  vertex v0_c = vertex_copy(v0);
-  vertex v1_c = vertex_copy(v1);
-  vertex v2_c = vertex_copy(v2);
-  post_process_tverts(p, (triangle){v0_c, v1_c, v2_c});
-  vertex_free(&v0_c);
-  vertex_free(&v1_c);
-  vertex_free(&v2_c);
+                              const vertex *v2, unsigned int index) {
+  triangle trian =
+      p->effect.gs.process(p->effect.gs.shader_data, v0, v1, v2, index);
+
+  post_process_tverts(p, trian);
+
+  vertex_free(&trian.v0);
+  vertex_free(&trian.v1);
+  vertex_free(&trian.v2);
 }
 
 static void post_process_tverts(pipeline *p, triangle tr) {

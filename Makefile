@@ -7,10 +7,16 @@
 
 EXE=graphics
 CMAKE_OPTIONS=-DMINIFB_BUILD_EXAMPLES=OFF
+CMAKE_DEBUG_OPTIONS=-DNOTSTD_SET_DEBUG_FLAGS=ON
+
 ODIR=build
 
 all:
 	cd ./$(ODIR) && cmake $(CMAKE_OPTIONS) ..
+	cd ./$(ODIR) && make
+
+buildd:
+	cd ./$(ODIR) && cmake $(CMAKE_DEBUG_OPTIONS) ..
 	cd ./$(ODIR) && make
 
 clean:
@@ -20,3 +26,4 @@ clean:
 run:
 	cd ./$(ODIR) && make
 	./$(ODIR)/$(EXE)
+

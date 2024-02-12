@@ -25,13 +25,15 @@ struct vertex vertex_interpolate_to(const struct vertex *tv,
 void vertex_free(struct vertex *v) { v->fn->free(v); }
 
 // Default vertex
-static vertex copy(const vertex *v) { return vertex_default_create(v->pos); }
+static vertex copy(const vertex *v) {
+  return vertex_default_create(v->pos, NULL);
+}
 
 static vertex interpolate_to(const vertex *tv, const vertex *inter_to,
                              float alpha) {
   vec3 new_pos = vec3_interpolate_to(&tv->pos, &inter_to->pos, alpha);
 
-  return vertex_default_create(new_pos);
+  return vertex_default_create(new_pos, NULL);
 }
 
 static void add(vertex *v0, const vertex *v1) { vec3_add(&v0->pos, &v1->pos); }
@@ -54,7 +56,8 @@ static vertex_funcs fns = (vertex_funcs){
     .free = vfree,
 };
 
-vertex vertex_default_create(vec3 pos) {
+vertex vertex_default_create(vec3 pos, void *sd) {
+  UNUSED(sd);
   return (vertex){
       .pos = pos,
       .sd = NULL,

@@ -1,7 +1,6 @@
 #ifndef PIPELINE_H
 #define PIPELINE_H
 
-#include "./shaders/vertex.h"
 #include "renderer/renderer.h"
 #include "screen_transformer.h"
 #include "shaders/effect.h"
@@ -16,12 +15,6 @@ typedef struct {
   surface tex;
   effect effect;
 } pipeline;
-
-typedef struct {
-  vertex v0;
-  vertex v1;
-  vertex v2;
-} triangle;
 
 pipeline pipeline_create(renderer *rn, effect ef);
 void pipeline_begin_frame(pipeline *p);
