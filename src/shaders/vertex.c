@@ -1,4 +1,6 @@
 #include "vertex.h"
+#include "essentials.h"
+#include <stdio.h>
 
 struct vertex vertex_copy(const struct vertex *v) { return v->fn->copy(v); }
 
@@ -40,7 +42,7 @@ static void mult(vertex *v0, float rhs) { vec3_mult_s(&v0->pos, rhs); }
 
 static void divd(vertex *v0, float rhs) { vec3_div_s(&v0->pos, rhs); }
 
-static void vfree(vertex *v) {}
+static void vfree(vertex *v) { UNUSED(v); }
 
 static vertex_funcs fns = (vertex_funcs){
     .interpolate_to = interpolate_to,

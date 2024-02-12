@@ -68,7 +68,8 @@ void renderer_create_line(renderer *rn, int x1, int y1, int x2, int y2,
     for (int x = x1; x < x2; x++) {
       int y = (int)(m * x + b);
 
-      if (y >= 0 && y < rn->buffer_height && x >= 0 && x < rn->buffer_width) {
+      if (y >= 0 && (unsigned int)y < rn->buffer_height && x >= 0 &&
+          (unsigned int)x < rn->buffer_width) {
         renderer_put_pixel(rn, x, y, v);
       }
     }
@@ -87,7 +88,8 @@ void renderer_create_line(renderer *rn, int x1, int y1, int x2, int y2,
 
     for (int y = y1; y < y2; y++) {
       int x = (int)(w * y + p);
-      if (y >= 0 && y < rn->buffer_height && x >= 0 && x < rn->buffer_width) {
+      if (y >= 0 && (unsigned int)y < rn->buffer_height && x >= 0 &&
+          (unsigned int)x < rn->buffer_width) {
         renderer_put_pixel(rn, x, y, v);
       }
     }

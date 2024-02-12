@@ -26,7 +26,7 @@ static void update(keyboard *kbd, double dt) {
   }
 }
 
-static void render(renderer *rn) {
+static void render() {
   pipeline_begin_frame(&pip);
 
   mat3 rot_x = mat3_rotationX(rotation.x);
@@ -43,7 +43,7 @@ static void render(renderer *rn) {
 }
 
 scene scene_cube_skin_create(renderer *rn) {
-  vt = cube_create_skinned(1.0f);
+  vt = cube_create_skinned(1.0f, tex_vertex_create);
 
   pixel_shader ps = texture_shader_create();
   texture_shader_bind_texture(ps.shader_data, "assets/office_skin.png");

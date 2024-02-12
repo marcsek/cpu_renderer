@@ -1,10 +1,14 @@
 #include "../surface.h"
+#include "essentials.h"
 #include "scene.h"
 #include <MiniFB.h>
 
 surface sf;
 
-static void update(keyboard *kbd, double dt) {}
+static void update(keyboard *kbd, double dt) {
+  UNUSED(kbd);
+  UNUSED(dt);
+}
 
 static void render(renderer *rn) {
   for (size_t y = 0; y < sf.height; y++) {
@@ -15,6 +19,7 @@ static void render(renderer *rn) {
 }
 
 scene scene_texture_create(renderer *rn) {
+  UNUSED(rn);
   sf = surface_from_file("assets/sunf.png");
 
   return (scene){

@@ -11,7 +11,7 @@ static const int forced_pitch = 4;
 static void convert_to_correct_format(uint32_t *conv, const unsigned char *old,
                                       size_t size) {
   for (size_t i = 0; i < size * forced_pitch; i += forced_pitch) {
-    conv[i / forced_pitch] = 0xFF << 24 | (uint32_t)old[i] << 16 |
+    conv[i / forced_pitch] = (uint32_t)0xFF << 24 | (uint32_t)old[i] << 16 |
                              (uint32_t)old[i + 1] << 8 | (uint32_t)old[i + 2];
   }
 }

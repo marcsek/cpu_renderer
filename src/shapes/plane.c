@@ -3,7 +3,6 @@
 #include "vec2.h"
 #include "vec3.h"
 #include "vector.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include <sys/_types/_size_t.h>
 
@@ -11,7 +10,6 @@ indexed_triangle_list plain_create_plain(int divisions, float size) {
   const int n_vertices = divisions + 1;
 
   vector *v = vector_create((n_vertices + 1) * (n_vertices + 1));
-  vertex **vd = (vertex **)vector_get_data(v);
 
   {
     const float side = size / 2.0f;
@@ -33,8 +31,8 @@ indexed_triangle_list plain_create_plain(int divisions, float size) {
   vector *i = vector_create((divisions * divisions) * 6);
 
   {
-    for (size_t y = 0; y < divisions; y++) {
-      for (size_t x = 0; x < divisions; x++) {
+    for (size_t y = 0; y < (size_t)divisions; y++) {
+      for (size_t x = 0; x < (size_t)divisions; x++) {
         size_t *idx0 = malloc(sizeof(size_t));
         size_t *idx1 = malloc(sizeof(size_t));
         size_t *idx2 = malloc(sizeof(size_t));

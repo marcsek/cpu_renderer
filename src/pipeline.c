@@ -51,7 +51,6 @@ static void process_vertices(pipeline *p, const vector *verts,
         (vertex){.pos = data[i]->pos, .sd = data[i]->sd, .fn = data[i]->fn};
 
     *new_vertex = p->effect.vs.transform(p->effect.vs.shader_data, new_vertex);
-
     vector_push_back(verts_out, new_vertex);
   }
 
@@ -100,5 +99,5 @@ static void post_process_tverts(pipeline *p, triangle tr) {
   st_transform(&p->st, &tr.v1);
   st_transform(&p->st, &tr.v2);
 
-  triangle_rasterizer_draw(p->rn, tr, &p->tex, p);
+  triangle_rasterizer_draw(p->rn, tr, p);
 }

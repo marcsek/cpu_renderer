@@ -5,9 +5,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-static int i_buffer[24] = {0, 1, 1, 3, 3, 2, 2, 0, 0, 4, 1, 5,
-                           3, 7, 2, 6, 4, 5, 5, 7, 7, 6, 6, 4};
-
 static int t_buffer[36] = {0, 2,  1,  2, 3,  1, 4,  8, 5, 5,  8, 9,
                            2, 6,  3,  3, 6,  7, 4,  5, 7, 4,  7, 6,
                            2, 10, 11, 2, 11, 6, 12, 3, 7, 12, 7, 13};
@@ -20,7 +17,7 @@ static vec2 convert_tex_coords(float u, float v) {
   return (vec2){(u + 1.0f) / 3.0f, v / 4.0f};
 }
 
-indexed_triangle_list cube_create_skinned(float size) {
+indexed_triangle_list cube_create_skinned(float size, vertex_create_func vcf) {
   const float side = size / 2.0f;
 
   vector *v = vector_create(14);
@@ -80,7 +77,7 @@ indexed_triangle_list cube_create_skinned(float size) {
 
   for (size_t i = 0; i < 14; i++) {
     vertex *new_vert = malloc(sizeof(vertex));
-    *new_vert = tex_vertex_create(*v_data[i], t_data[i]);
+    *new_vert = vcf(*v_data[i], t_data[i]);
     vector_push_back(vertices, new_vert);
   }
 
@@ -97,7 +94,7 @@ indexed_triangle_list cube_create_skinned(float size) {
   };
 }
 
-indexed_triangle_list cube_create_plain(float size) {
+indexed_triangle_list cube_create_plain(float size, vertex_create_func vcf) {
   const float side = size / 2.0f;
 
   vector *v = vector_create(8);
@@ -121,7 +118,7 @@ indexed_triangle_list cube_create_plain(float size) {
 
   for (size_t i = 0; i < 8; i++) {
     vertex *new_vert = malloc(sizeof(vertex));
-    *new_vert = color_vertex_create(*v_data[i], NULL);
+    *new_vert = vcf(*v_data[i], NULL);
     vector_push_back(vertices, new_vert);
   }
 

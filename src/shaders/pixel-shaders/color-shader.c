@@ -1,7 +1,9 @@
 #include "../effect.h"
 #include "../vertex.h"
 #include "MiniFB.h"
+#include "essentials.h"
 #include "vec3.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 #define get_sd(var, type)                                                      \
@@ -87,6 +89,7 @@ vertex color_vertex_create(vec3 pos, void *sd) {
 }
 
 static uint32_t create_pixel(void *data, const vertex *inv) {
+  UNUSED(data);
   mvertex in = get_sd(inv, vec3);
 
   return MFB_ARGB(0xFF, in.color->x, in.color->y, in.color->z);

@@ -6,7 +6,7 @@
 
 typedef struct {
   void (*update)(keyboard *kbd, double dt);
-  void (*render)(renderer *rn);
+  void (*render)();
 } scene;
 
 scene scene_cube_skin_create(renderer *rn);

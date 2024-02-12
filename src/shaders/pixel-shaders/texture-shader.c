@@ -3,6 +3,7 @@
 #include "../vertex.h"
 #include "vec2.h"
 #include "vec3.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 #define get_sd(var, type)                                                      \

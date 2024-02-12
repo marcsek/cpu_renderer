@@ -11,7 +11,7 @@ z_buffer z_buffer_create(int width, int height) {
   base_buffer = malloc(width * height * sizeof(float));
 
   // initialize base_buffer
-  for (size_t i = 0; i < width * height; i++) {
+  for (size_t i = 0; i < (size_t)width * height; i++) {
     base_buffer[i] = INFINITY;
   }
 

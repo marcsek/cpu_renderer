@@ -1,5 +1,6 @@
 #include "app.h"
 #include "MiniFB_enums.h"
+#include "essentials.h"
 #include "helpers/debug_info.h"
 #include "keyboard.h"
 #include "renderer/renderer.h"
@@ -39,7 +40,7 @@ int app_init() {
   scenes[2] = scene_cube_skin_create(&rn);
   scenes[3] = scene_overlap_cube_create(&rn);
   scenes[4] = pos_cube_create(&rn);
-  // **
+  //      **
 
   return 0;
 }
@@ -47,7 +48,6 @@ int app_init() {
 void app_mainloop() {
   struct mfb_timer *timer = mfb_timer_create();
   struct mfb_timer *tick_timer = mfb_timer_create();
-  double total_tick_time = 0.0f;
   double delta = 1.0f;
   double frame_time = delta * 1000;
   double fps = 1.0f / delta;
@@ -77,7 +77,7 @@ void app_mainloop() {
     frame_time = delta * 1000;
     fps = 1.0f / delta;
 
-    debug_info_output();
+    // debug_info_output();
 
   } while (mfb_wait_sync(wnd.mfb_window));
 
@@ -91,10 +91,12 @@ static void app_tick(double dt) {
 
 static void app_render() {
   renderer_reset_buffer(&rn);
-  scenes[cur_scene].render(&rn);
+  scenes[cur_scene].render();
 }
 
 static void handle_keypress(double dt) {
+  UNUSED(dt);
+
   if (kbd_key_is_pressed(wnd.kbd, KB_KEY_TAB) && !did_cycle) {
     cur_scene = (cur_scene + 1) % SCENE_LEN;
     did_cycle = true;

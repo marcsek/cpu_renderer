@@ -1,4 +1,5 @@
 #include "triangle_rasterizer.h"
+#include "essentials.h"
 #include "pipeline.h"
 #include "shaders/vertex.h"
 #include "z_buffer.h"
@@ -6,14 +7,13 @@
 
 static void draw_flat(renderer *rn, const vertex *v1, const vertex *v2,
                       const vertex *v3, const vertex *dv1, const vertex *dv2,
-                      vertex it_edge1, surface *tex, const pipeline *p);
+                      vertex it_edge1, const pipeline *p);
 static void draw_flat_top(renderer *rn, const vertex *v1, const vertex *v2,
-                          const vertex *v3, surface *tex, const pipeline *p);
+                          const vertex *v3, const pipeline *p);
 static void draw_flat_bot(renderer *rn, const vertex *v1, const vertex *v2,
-                          const vertex *v3, surface *tex, const pipeline *p);
+                          const vertex *v3, const pipeline *p);
 
-void triangle_rasterizer_draw(renderer *rn, triangle tr, surface *tex,
-                              const pipeline *p) {
+void triangle_rasterizer_draw(renderer *rn, triangle tr, const pipeline *p) {
   const vertex *v1 = &tr.v0;
   const vertex *v2 = &tr.v1;
   const vertex *v3 = &tr.v2;
@@ -28,28 +28,28 @@ void triangle_rasterizer_draw(renderer *rn, triangle tr, surface *tex,
   if (v1->pos.y == v2->pos.y) {
     if (v2->pos.x < v1->pos.x)
       nstd_swap((void **)&v1, (void **)&v2);
-    draw_flat_top(rn, v1, v2, v3, tex, p);
+    draw_flat_top(rn, v1, v2, v3, p);
   } else if (v3->pos.y == v2->pos.y) {
     if (v3->pos.x < v2->pos.x)
       nstd_swap((void **)&v2, (void **)&v3);
-    draw_flat_bot(rn, v1, v2, v3, tex, p);
+    draw_flat_bot(rn, v1, v2, v3, p);
   } else {
     const float alphaSplit = (v2->pos.y - v1->pos.y) / (v3->pos.y - v1->pos.y);
     vertex vi = vertex_interpolate_to(v1, v3, alphaSplit);
 
     if (v2->pos.x < vi.pos.x) {
-      draw_flat_bot(rn, v1, v2, &vi, tex, p);
-      draw_flat_top(rn, v2, &vi, v3, tex, p);
+      draw_flat_bot(rn, v1, v2, &vi, p);
+      draw_flat_top(rn, v2, &vi, v3, p);
     } else {
-      draw_flat_bot(rn, v1, &vi, v2, tex, p);
-      draw_flat_top(rn, &vi, v2, v3, tex, p);
+      draw_flat_bot(rn, v1, &vi, v2, p);
+      draw_flat_top(rn, &vi, v2, v3, p);
     }
     vertex_free(&vi);
   }
 }
 
 static void draw_flat_top(renderer *rn, const vertex *v1, const vertex *v2,
-                          const vertex *v3, surface *tex, const pipeline *p) {
+                          const vertex *v3, const pipeline *p) {
   const float delta_y = v3->pos.y - v1->pos.y;
 
   vertex dv0 = vertex_copy(v3);
@@ -62,7 +62,7 @@ static void draw_flat_top(renderer *rn, const vertex *v1, const vertex *v2,
 
   vertex v2_c = vertex_copy(v2);
 
-  draw_flat(rn, v1, v2, v3, &dv0, &dv1, v2_c, tex, p);
+  draw_flat(rn, v1, v2, v3, &dv0, &dv1, v2_c, p);
 
   vertex_free(&dv0);
   vertex_free(&dv1);
@@ -70,7 +70,7 @@ static void draw_flat_top(renderer *rn, const vertex *v1, const vertex *v2,
 }
 
 static void draw_flat_bot(renderer *rn, const vertex *v1, const vertex *v2,
-                          const vertex *v3, surface *tex, const pipeline *p) {
+                          const vertex *v3, const pipeline *p) {
   const float delta_y = v3->pos.y - v1->pos.y;
 
   vertex dv0 = vertex_copy(v2);
@@ -83,7 +83,7 @@ static void draw_flat_bot(renderer *rn, const vertex *v1, const vertex *v2,
 
   vertex v1_c = vertex_copy(v1);
 
-  draw_flat(rn, v1, v2, v3, &dv0, &dv1, v1_c, tex, p);
+  draw_flat(rn, v1, v2, v3, &dv0, &dv1, v1_c, p);
   vertex_free(&dv0);
   vertex_free(&dv1);
   vertex_free(&v1_c);
@@ -91,7 +91,9 @@ static void draw_flat_bot(renderer *rn, const vertex *v1, const vertex *v2,
 
 static void draw_flat(renderer *rn, const vertex *v1, const vertex *v2,
                       const vertex *v3, const vertex *dv1, const vertex *dv2,
-                      vertex it_edge1, surface *tex, const pipeline *p) {
+
+                      vertex it_edge1, const pipeline *p) {
+  UNUSED(v2);
   vertex it_edge0 = vertex_copy(v1);
 
   const int y_start = (int)ceil((double)(v1->pos.y - 0.5f));
@@ -125,7 +127,7 @@ static void draw_flat(renderer *rn, const vertex *v1, const vertex *v2,
     for (int x = x_start; x < x_end; x++, vertex_add(&i_line, &di_line)) {
       const float z = 1.0f / i_line.pos.z;
 
-      if (z_buffer_test_and_set(&p->zb, x, y, z)) {
+      if (z_buffer_test_and_set((z_buffer *)&p->zb, x, y, z)) {
         vertex i_line_c = vertex_copy(&i_line);
         vertex_mult(&i_line_c, z);
 

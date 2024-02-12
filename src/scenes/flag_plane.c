@@ -1,9 +1,7 @@
 #include "../pipeline.h"
 #include "../shapes/shapes.h"
 #include "scene.h"
-#include "vector.h"
 #include <MiniFB.h>
-#include <stdio.h>
 
 static pipeline pip;
 static vec3 rotation = {0.0f, 0.0f, 0.0f};
@@ -30,7 +28,7 @@ static void update(keyboard *kbd, double dt) {
   time += dt;
 }
 
-static void render(renderer *rn) {
+static void render() {
   pipeline_begin_frame(&pip);
 
   mat3 rot_x = mat3_rotationX(rotation.x);
@@ -49,7 +47,6 @@ static void render(renderer *rn) {
 
 scene scene_flag_plane_create(renderer *rn) {
   v = plain_create_skinned(20, 1.0f);
-  printf("%lu\n", vector_get_size(v.vertices));
 
   pixel_shader ps = texture_shader_create();
   texture_shader_bind_texture(ps.shader_data, "assets/sunf.png");

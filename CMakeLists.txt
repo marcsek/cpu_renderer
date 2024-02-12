@@ -12,6 +12,8 @@ set(SrcVendor
   vendors/stb/stb_image.h
 )
 
+set (CMAKE_C_FLAGS "-Wextra -Wall -fsanitize=undefined,address")
+
 add_subdirectory(dependencies/minifb)
 add_subdirectory(dependencies/notstd)
 

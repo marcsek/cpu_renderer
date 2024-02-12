@@ -5,7 +5,7 @@
 
 keyboard kbd_create() {
   keyboard kbd = (keyboard){
-      .keystate = malloc(sizeof(bool) * TOTAL_KEY_CODES),
+      .keystate = calloc(TOTAL_KEY_CODES, sizeof(bool)),
   };
   return kbd;
 }

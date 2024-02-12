@@ -27,7 +27,7 @@ static void update(keyboard *kbd, double dt) {
   }
 }
 
-static void render(renderer *rn) {
+static void render() {
   pipeline_begin_frame(&pip);
 
   mat3 rot_x = mat3_rotationX(rotation.x);
@@ -44,7 +44,7 @@ static void render(renderer *rn) {
 }
 
 scene scene_color_cube_create(renderer *rn) {
-  v = cube_create_plain(1.0f);
+  v = cube_create_plain(1.0f, color_vertex_create);
   vertex **d = (vertex **)vector_get_data(v.vertices);
 
   for (size_t i = 0; i < 8; i++) {
