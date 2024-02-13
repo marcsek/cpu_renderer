@@ -12,5 +12,7 @@ typedef struct {
 } indexed_triangle_list;
 
 indexed_triangle_list itd_load(const char *file_name, vertex_create_func vcf);
+indexed_triangle_list itd_load_normals(const char *file_name,
+                                       vertex_create_func vcf);
 
 #endif

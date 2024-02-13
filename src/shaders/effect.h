@@ -49,6 +49,9 @@ vertex_shader position_vertex_create();
 vertex_shader wawe_vertex_create();
 void wawe_vertex_set_time(void *d, float time);
 
+vertex_shader flat_vertex_create();
+void flat_vertex_bind_dir(void *data, const vec3 *dir_in);
+
 // Geometry shaders
 geometry_shader default_geometry_create();
 

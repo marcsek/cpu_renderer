@@ -2,6 +2,7 @@
 #include "../vendors/tinyobj/tinyobj_loader_c.h"
 #include "essentials.h"
 #include "helpers/debug_info.h"
+#include "vec3.h"
 #include "vector.h"
 #include <ctype.h>
 #include <stdio.h>
@@ -67,6 +68,8 @@ indexed_triangle_list itd_load(const char *file_name, vertex_create_func vcf) {
     debug_printf("Couldn\'t parse obj file. (%s)", file_name);
   }
 
+  debug_printf("%lu %lu", attrib.num_vertices, attrib.num_normals);
+
   tl.vertices = vector_create(attrib.num_vertices);
 
   for (int i = 0; (unsigned int)i < attrib.num_vertices * 3; i += 3) {
@@ -84,6 +87,70 @@ indexed_triangle_list itd_load(const char *file_name, vertex_create_func vcf) {
     int *v = malloc(sizeof(int));
     *v = attrib.faces[i].v_idx;
     vector_push_back(tl.indices, v);
+  }
+
+  tinyobj_attrib_free(&attrib);
+  tinyobj_shapes_free(shapes, num_shapes);
+  tinyobj_materials_free(materials, num_materials);
+
+  return tl;
+}
+
+indexed_triangle_list itd_load_normals(const char *file_name,
+                                       vertex_create_func vcf) {
+  indexed_triangle_list tl;
+
+  bool isCCW = false;
+
+  tinyobj_attrib_t attrib;
+  tinyobj_shape_t *shapes = NULL;
+  size_t num_shapes;
+  tinyobj_material_t *materials = NULL;
+  size_t num_materials;
+
+  unsigned int flags = 0;
+  const int ret =
+      tinyobj_parse_obj(&attrib, &shapes, &num_shapes, &materials,
+                        &num_materials, file_name, load_file, &isCCW, flags);
+
+  if (ret != TINYOBJ_SUCCESS) {
+    debug_printf("Couldn\'t parse obj file. (%s)", file_name);
+  }
+
+  debug_printf("%lu %lu", attrib.num_vertices, attrib.num_normals);
+
+  tl.vertices = vector_create(attrib.num_vertices);
+
+  for (int i = 0; (unsigned int)i < attrib.num_vertices * 3; i += 3) {
+    vertex *new_vertex = malloc(sizeof(vertex));
+    *new_vertex = vcf((vec3){attrib.vertices[i], attrib.vertices[i + 1],
+                             attrib.vertices[i + 2]},
+                      NULL);
+    vector_push_back(tl.vertices, new_vertex);
+  }
+
+  tl.indices = vector_create(attrib.num_faces);
+  debug_printf("%d\n", attrib.num_faces);
+  for (int i = 0; (unsigned int)i < attrib.num_faces; i++) {
+    int *v = malloc(sizeof(int));
+    *v = attrib.faces[i].v_idx;
+    vector_push_back(tl.indices, v);
+  }
+
+  vertex **vertices = (vertex **)vector_get_data(tl.vertices);
+
+  for (int i = 0; (unsigned int)i < attrib.num_faces; i++) {
+    int i0 = attrib.faces[i].vn_idx;
+
+    vec3 *normal = malloc(sizeof(vec3));
+
+    *normal = (vec3){
+        .x = attrib.normals[3 * i0],
+        .y = attrib.normals[3 * i0 + 1],
+        .z = attrib.normals[3 * i0 + 2],
+    };
+
+    vertices[attrib.faces[i].v_idx]->sd = normal;
   }
 
   tinyobj_attrib_free(&attrib);
