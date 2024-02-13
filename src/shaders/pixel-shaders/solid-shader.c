@@ -1,4 +1,3 @@
-
 #include "../effect.h"
 #include "../vertex.h"
 #include "vec3.h"

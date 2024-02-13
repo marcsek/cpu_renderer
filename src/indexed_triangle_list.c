@@ -21,7 +21,7 @@ static void load_file(void *ctx, const char *filename, int is_mtl,
   FILE *fptr;
 
   if ((fptr = fopen(filename, "r")) == NULL) {
-    debug_printf("Couldn\'t open obj file. (%s)", filename);
+    printf("Couldn\'t open obj file. (%s)\n", filename);
   }
 
   char buff[MAX_BUFFER_LENGTH];

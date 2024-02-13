@@ -29,11 +29,27 @@ struct vertex vertex_interpolate_to(const struct vertex *tv,
                                     const struct vertex *inter_to, float alpha);
 void vertex_free(struct vertex *v);
 
-vertex vertex_default_create(vec3 pos, void *sd);
+// Custom * * * *
 
-// Contructors for each shader effect
+typedef struct {
+  vec3 pos;
+  vec3 *color;
+} color_vertex;
+
+typedef struct {
+  vec3 pos;
+  vec2 *tc;
+} tex_vertex;
+
+typedef struct {
+  vec3 pos;
+  uint32_t *color;
+} scolor_vertex;
+
+// Contructors for each vertex shader effect
+vertex vertex_default_create(vec3 pos, void *sd);
 vertex tex_vertex_create(vec3 pos, void *sd);
 vertex color_vertex_create(vec3 pos, void *sd);
-vertex solid_vertex_create(vec3 pos, void *sd);
+vertex scolor_vertex_create(vec3 pos, void *sd);
 
 #endif
