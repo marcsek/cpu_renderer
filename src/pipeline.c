@@ -1,5 +1,6 @@
 #include "pipeline.h"
 #include "app.h"
+#include "helpers/debug_info.h"
 #include "screen_transformer.h"
 #include "shaders/vertex.h"
 #include "triangle_rasterizer.h"
@@ -7,6 +8,7 @@
 #include "vector.h"
 #include "z_buffer.h"
 #include <assert.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 static void process_vertices(pipeline *p, const vector *verts,

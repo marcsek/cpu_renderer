@@ -35,6 +35,7 @@ typedef struct geomtry_shader_data geometry_shader_data;
 
 // Pixel shaders
 pixel_shader default_pixel_create();
+void pixel_shader_bind_color(void *px, const vec3 *color_in);
 
 pixel_shader texture_shader_create();
 void texture_shader_bind_texture(pixel_shader_data *px, const char *file_name);
@@ -51,6 +52,9 @@ void wawe_vertex_set_time(void *d, float time);
 
 vertex_shader flat_vertex_create();
 void flat_vertex_bind_dir(void *data, const vec3 *dir_in);
+
+vertex_shader point_vertex_create();
+void point_vertex_bind_pos(void *data, const vec3 *dir_in);
 
 // Geometry shaders
 geometry_shader default_geometry_create();

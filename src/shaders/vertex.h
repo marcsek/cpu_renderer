@@ -46,10 +46,16 @@ typedef struct {
   uint32_t *color;
 } scolor_vertex;
 
+typedef struct {
+  vec3 pos;
+  vec3 *normal;
+} normal_vertex;
+
 // Contructors for each vertex shader effect
 vertex vertex_default_create(vec3 pos, void *sd);
 vertex tex_vertex_create(vec3 pos, void *sd);
 vertex color_vertex_create(vec3 pos, void *sd);
 vertex scolor_vertex_create(vec3 pos, void *sd);
+vertex normal_vertex_create(vec3 pos, void *sd);
 
 #endif
