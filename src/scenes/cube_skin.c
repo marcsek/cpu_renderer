@@ -1,3 +1,4 @@
+#include "../app.h"
 #include "../pipeline.h"
 #include "../shapes/shapes.h"
 #include "scene.h"
@@ -7,6 +8,7 @@ static pipeline pip;
 static vec3 rotation = {0.0f, 0.0f, 0.0f};
 static float z_offset = 2.0f;
 static indexed_triangle_list vt;
+static z_buffer zb;
 
 static void update(keyboard *kbd, double dt) {
   if (kbd_key_is_pressed(kbd, KB_KEY_Q)) {
@@ -51,7 +53,10 @@ scene scene_cube_skin_create(renderer *rn) {
   geometry_shader gs = default_geometry_create();
 
   effect ef = (effect){ps, vs, gs};
-  pip = pipeline_create(rn, ef);
+
+  zb = z_buffer_create(WINDOW_WIDTH, WINDOW_HEIGHT);
+
+  pip = pipeline_create(rn, ef, &zb);
 
   return (scene){
       .update = update,

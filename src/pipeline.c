@@ -1,6 +1,5 @@
 #include "pipeline.h"
 #include "app.h"
-#include "helpers/debug_info.h"
 #include "screen_transformer.h"
 #include "shaders/vertex.h"
 #include "triangle_rasterizer.h"
@@ -8,7 +7,6 @@
 #include "vector.h"
 #include "z_buffer.h"
 #include <assert.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 static void process_vertices(pipeline *p, const vector *verts,
@@ -25,14 +23,15 @@ void verts_cf(void *to_free) {
   free(to_free_v);
 }
 
-pipeline pipeline_create(renderer *rn, effect ef) {
+// z_buffer_create(WINDOW_WIDTH, WINDOW_HEIGHT)
+pipeline pipeline_create(renderer *rn, effect ef, z_buffer *zb) {
   return (pipeline){.rn = rn,
                     .st = st_create(WINDOW_WIDTH, WINDOW_HEIGHT),
                     .effect = ef,
-                    .zb = z_buffer_create(WINDOW_WIDTH, WINDOW_HEIGHT)};
+                    .zb = zb};
 }
 
-void pipeline_begin_frame(pipeline *p) { z_buffer_clear(&p->zb); }
+void pipeline_begin_frame(pipeline *p) { z_buffer_clear(p->zb); }
 
 void pipeline_draw(pipeline *p, indexed_triangle_list *tri_list) {
   process_vertices(p, tri_list->vertices, tri_list->indices);

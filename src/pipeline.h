@@ -11,12 +11,12 @@
 typedef struct {
   renderer *rn;
   screen_transformer st;
-  z_buffer zb;
+  z_buffer *zb;
   surface tex;
   effect effect;
 } pipeline;
 
-pipeline pipeline_create(renderer *rn, effect ef);
+pipeline pipeline_create(renderer *rn, effect ef, z_buffer *zb);
 void pipeline_begin_frame(pipeline *p);
 void pipeline_draw(pipeline *p, indexed_triangle_list *tri_list);
 

@@ -17,6 +17,5 @@ scene pos_cube_create(renderer *rn);
 scene scene_flag_plane_create(renderer *rn);
 scene scene_bunny_create(renderer *rn);
 scene scene_suz_create(renderer *rn);
-scene test_cube_create(renderer *rn);
 
 #endif

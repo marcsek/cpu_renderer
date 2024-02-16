@@ -127,7 +127,7 @@ static void draw_flat(renderer *rn, const vertex *v1, const vertex *v2,
     for (int x = x_start; x < x_end; x++, vertex_add(&i_line, &di_line)) {
       const float z = 1.0f / i_line.pos.z;
 
-      if (z_buffer_test_and_set((z_buffer *)&p->zb, x, y, z)) {
+      if (z_buffer_test_and_set((z_buffer *)p->zb, x, y, z)) {
         vertex i_line_c = vertex_copy(&i_line);
         vertex_mult(&i_line_c, z);
 

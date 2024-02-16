@@ -1,3 +1,4 @@
+#include "../app.h"
 #include "../pipeline.h"
 #include "mat3.h"
 #include "scene.h"
@@ -10,6 +11,7 @@ static vec3 light_pos = {0.0f, 0.0f, 0.6f};
 static float z_offset = 2.0f;
 static indexed_triangle_list v;
 static indexed_triangle_list l_v;
+static z_buffer zb;
 
 static void update(keyboard *kbd, double dt) {
   if (kbd_key_is_pressed(kbd, KB_KEY_Q)) {
@@ -57,7 +59,6 @@ static void render() {
   point_vertex_bind_pos(pip.effect.vs.shader_data, &light_pos);
   pipeline_draw(&pip, &v);
 
-  pipeline_begin_frame(&l_pip);
   mat3 ident = mat3_identity();
   l_pip.effect.vs.bind_rotation(&l_pip.effect.vs, ident);
   l_pip.effect.vs.bind_translation(&l_pip.effect.vs, light_pos);
@@ -79,11 +80,13 @@ scene scene_suz_create(renderer *rn) {
   vec3 light_color = (vec3){255.0f, 255.0f, 255.0f};
   pixel_shader_bind_color(l_ps.shader_data, &light_color);
 
+  zb = z_buffer_create(WINDOW_WIDTH, WINDOW_HEIGHT);
+
   effect ef = (effect){ps, vs, gs};
-  pip = pipeline_create(rn, ef);
+  pip = pipeline_create(rn, ef, &zb);
 
   effect l_ef = (effect){l_ps, l_vs, l_gs};
-  l_pip = pipeline_create(rn, l_ef);
+  l_pip = pipeline_create(rn, l_ef, &zb);
 
   return (scene){
       .update = update,

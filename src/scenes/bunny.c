@@ -1,3 +1,4 @@
+#include "../app.h"
 #include "../pipeline.h"
 #include "mat3.h"
 #include "scene.h"
@@ -9,6 +10,7 @@ static vec3 rotation_c = {0.0f, 0.0f, 0.0f};
 static vec3 light_dir = {10.2f, -0.5f, 1.0f};
 static float z_offset = 2.0f;
 static indexed_triangle_list v;
+static z_buffer zb;
 
 static void update(keyboard *kbd, double dt) {
   if (kbd_key_is_pressed(kbd, KB_KEY_Q)) {
@@ -69,7 +71,10 @@ scene scene_bunny_create(renderer *rn) {
   geometry_shader gs = default_geometry_create();
 
   effect ef = (effect){ps, vs, gs};
-  pip = pipeline_create(rn, ef);
+
+  zb = z_buffer_create(WINDOW_WIDTH, WINDOW_HEIGHT);
+
+  pip = pipeline_create(rn, ef, &zb);
 
   return (scene){
       .update = update,
