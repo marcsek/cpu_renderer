@@ -4,7 +4,7 @@
 #include "shaders/vertex.h"
 #include <notstd.h>
 
-typedef vertex (*vertex_create_func)(vec3 pos, void *sd);
+typedef vertex (*vertex_create_func)(vec4 pos, void *sd);
 
 typedef struct {
   vector *vertices;

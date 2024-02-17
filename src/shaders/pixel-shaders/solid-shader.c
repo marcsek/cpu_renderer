@@ -1,13 +1,12 @@
 #include "../effect.h"
 #include "../vertex.h"
-#include "vec3.h"
 #include <stdint.h>
 
 #define get_sd(var, type)                                                      \
   { .pos = (var)->pos, .color = ((type *)(var)->sd) }
 
 typedef struct {
-  vec3 pos;
+  vec4 pos;
   uint32_t *color;
 } mvertex;
 

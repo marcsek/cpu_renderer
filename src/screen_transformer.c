@@ -1,5 +1,4 @@
 #include "screen_transformer.h"
-#include "vec3.h"
 
 screen_transformer st_create(float x_size, float y_size) {
   return (screen_transformer){.x_size = x_size / 2.0f, .y_size = y_size / 2.0f};

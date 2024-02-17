@@ -15,20 +15,20 @@ static vertex interpolate_to(const vertex *tv, const vertex *inter_to,
   vertex tvc = copy(tv);
   scolor_vertex tvm = get_sd(&tvc, uint32_t);
 
-  vec3 new_pos = vec3_interpolate_to(&tv->pos, &inter_to->pos, alpha);
+  vec4 new_pos = vec4_interpolate_to(&tv->pos, &inter_to->pos, alpha);
 
   tvm.pos = new_pos;
 
   return scolor_vertex_create(tvm.pos, tvc.sd);
 }
 
-static void add(vertex *v0, const vertex *v1) { vec3_add(&v0->pos, &v1->pos); }
+static void add(vertex *v0, const vertex *v1) { vec4_add(&v0->pos, &v1->pos); }
 
-static void sub(vertex *v0, const vertex *v1) { vec3_subs(&v0->pos, &v1->pos); }
+static void sub(vertex *v0, const vertex *v1) { vec4_subs(&v0->pos, &v1->pos); }
 
-static void mult(vertex *v0, float rhs) { vec3_mult_s(&v0->pos, rhs); }
+static void mult(vertex *v0, float rhs) { vec4_mult_s(&v0->pos, rhs); }
 
-static void divd(vertex *v0, float rhs) { vec3_div_s(&v0->pos, rhs); }
+static void divd(vertex *v0, float rhs) { vec4_div_s(&v0->pos, rhs); }
 
 static void vfree(vertex *v) {
   scolor_vertex vm = get_sd(v, uint32_t);
@@ -45,7 +45,7 @@ static vertex_funcs fns = (vertex_funcs){
     .free = vfree,
 };
 
-vertex scolor_vertex_create(vec3 pos, void *sd) {
+vertex scolor_vertex_create(vec4 pos, void *sd) {
   return (vertex){
       .pos = pos,
       .sd = sd,

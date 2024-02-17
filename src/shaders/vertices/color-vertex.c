@@ -5,11 +5,11 @@
 
 typedef struct {
   mat3 rotation;
-  vec3 translation;
+  vec4 translation;
 } default_shader_data;
 
 typedef struct {
-  vec3 pos;
+  vec4 pos;
   vec3 *color;
 } mvertex;
 
@@ -26,7 +26,7 @@ static vertex interpolate_to(const vertex *tv, const vertex *inter_to,
   mvertex tvm = get_sd(&tvc, vec3);
   mvertex itm = get_sd(inter_to, vec3);
 
-  vec3 new_pos = vec3_interpolate_to(&tv->pos, &inter_to->pos, alpha);
+  vec4 new_pos = vec4_interpolate_to(&tv->pos, &inter_to->pos, alpha);
   vec3 new_tc = vec3_interpolate_to(tvm.color, itm.color, alpha);
 
   tvm.pos = new_pos;
@@ -38,26 +38,26 @@ static vertex interpolate_to(const vertex *tv, const vertex *inter_to,
 static void add(vertex *v0, const vertex *v1) {
   mvertex v0m = get_sd(v0, vec3);
   mvertex v1m = get_sd(v1, vec3);
-  vec3_add(&v0->pos, &v1->pos);
+  vec4_add(&v0->pos, &v1->pos);
   vec3_add(v0m.color, v1m.color);
 }
 
 static void sub(vertex *v0, const vertex *v1) {
   mvertex v0m = get_sd(v0, vec3);
   mvertex v1m = get_sd(v1, vec3);
-  vec3_subs(&v0->pos, &v1->pos);
+  vec4_subs(&v0->pos, &v1->pos);
   vec3_subs(v0m.color, v1m.color);
 }
 
 static void mult(vertex *v0, float rhs) {
   mvertex v0m = get_sd(v0, vec3);
-  vec3_mult_s(&v0->pos, rhs);
+  vec4_mult_s(&v0->pos, rhs);
   vec3_mult_s(v0m.color, rhs);
 }
 
 static void divd(vertex *v0, float rhs) {
   mvertex v0m = get_sd(v0, vec3);
-  vec3_div_s(&v0->pos, rhs);
+  vec4_div_s(&v0->pos, rhs);
   vec3_div_s(v0m.color, rhs);
 }
 
@@ -76,7 +76,7 @@ static vertex_funcs fns = (vertex_funcs){
     .free = vfree,
 };
 
-vertex color_vertex_create(vec3 pos, void *sd) {
+vertex color_vertex_create(vec4 pos, void *sd) {
   return (vertex){
       .pos = pos,
       .sd = sd,

@@ -1,6 +1,7 @@
 #ifndef TEXTURE_VERTEX_H
 #define TEXTURE_VERTEX_H
 
+#include "vec4.h"
 #include <notstd.h>
 
 typedef struct {
@@ -15,7 +16,7 @@ typedef struct {
 } vertex_funcs;
 
 typedef struct vertex {
-  vec3 pos;
+  vec4 pos;
   void *sd;
   vertex_funcs *fn;
 } vertex;
@@ -32,30 +33,30 @@ void vertex_free(struct vertex *v);
 // Custom * * * *
 
 typedef struct {
-  vec3 pos;
+  vec4 pos;
   vec3 *color;
 } color_vertex;
 
 typedef struct {
-  vec3 pos;
+  vec4 pos;
   vec2 *tc;
 } tex_vertex;
 
 typedef struct {
-  vec3 pos;
+  vec4 pos;
   uint32_t *color;
 } scolor_vertex;
 
 typedef struct {
-  vec3 pos;
-  vec3 *normal;
+  vec4 pos;
+  vec4 *normal;
 } normal_vertex;
 
 // Contructors for each vertex shader effect
-vertex vertex_default_create(vec3 pos, void *sd);
-vertex tex_vertex_create(vec3 pos, void *sd);
-vertex color_vertex_create(vec3 pos, void *sd);
-vertex scolor_vertex_create(vec3 pos, void *sd);
-vertex normal_vertex_create(vec3 pos, void *sd);
+vertex vertex_default_create(vec4 pos, void *sd);
+vertex tex_vertex_create(vec4 pos, void *sd);
+vertex color_vertex_create(vec4 pos, void *sd);
+vertex scolor_vertex_create(vec4 pos, void *sd);
+vertex normal_vertex_create(vec4 pos, void *sd);
 
 #endif

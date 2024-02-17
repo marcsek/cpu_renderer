@@ -20,9 +20,13 @@ indexed_triangle_list plain_create_plain(int divisions, float size) {
       const float y_pos = ((float)y) * division_size;
       for (int x = 0; x < n_vertices; x++, i++) {
         vertex *bottom_left_c = malloc(sizeof(vertex));
-        *bottom_left_c = vertex_default_create(bottom_left, NULL);
-        vec3_add(&bottom_left_c->pos,
-                 &(vec3){(float)x * division_size, y_pos, 0.0f});
+        vec4 bl4 = (vec4){.x = bottom_left.x,
+                          .y = bottom_left.y,
+                          .z = bottom_left.z,
+                          .w = 1.0f};
+        *bottom_left_c = vertex_default_create(bl4, NULL);
+        vec4_add(&bottom_left_c->pos,
+                 &(vec4){(float)x * division_size, y_pos, 0.0f, 1.0f});
         vector_push_back(v, bottom_left_c);
       }
     }

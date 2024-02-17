@@ -77,7 +77,9 @@ indexed_triangle_list cube_create_skinned(float size, vertex_create_func vcf) {
 
   for (size_t i = 0; i < 14; i++) {
     vertex *new_vert = malloc(sizeof(vertex));
-    *new_vert = vcf(*v_data[i], t_data[i]);
+    vec4 pos4 = (vec4){
+        .x = v_data[i]->x, .y = v_data[i]->y, .z = v_data[i]->z, .w = 1.0f};
+    *new_vert = vcf(pos4, t_data[i]);
     vector_push_back(vertices, new_vert);
   }
 
@@ -118,7 +120,9 @@ indexed_triangle_list cube_create_plain(float size, vertex_create_func vcf) {
 
   for (size_t i = 0; i < 8; i++) {
     vertex *new_vert = malloc(sizeof(vertex));
-    *new_vert = vcf(*v_data[i], NULL);
+    vec4 pos4 = (vec4){
+        .x = v_data[i]->x, .y = v_data[i]->y, .z = v_data[i]->z, .w = 1.0f};
+    *new_vert = vcf(pos4, NULL);
     vector_push_back(vertices, new_vert);
   }
 

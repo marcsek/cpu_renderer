@@ -7,6 +7,7 @@
 #include "vector.h"
 #include "z_buffer.h"
 #include <assert.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 static void process_vertices(pipeline *p, const vector *verts,
@@ -68,14 +69,15 @@ static void assemble_triangles(pipeline *p, const vector *verts,
     vertex *v2 = data[*ind_d[i + 1]];
     vertex *v3 = data[*ind_d[i + 2]];
 
-    vec3 v2_pos = v2->pos;
-    vec3 v3_pos = v3->pos;
+    vec3 v1_pos = (vec3){v1->pos.x, v1->pos.y, v1->pos.z};
+    vec3 v2_pos = (vec3){v2->pos.x, v2->pos.y, v2->pos.z};
+    vec3 v3_pos = (vec3){v3->pos.x, v3->pos.y, v3->pos.z};
 
-    vec3_subs(&v2_pos, &v1->pos);
-    vec3_subs(&v3_pos, &v1->pos);
+    vec3_subs(&v2_pos, &v1_pos);
+    vec3_subs(&v3_pos, &v1_pos);
     vec3 cross = vec3_cross_prod(&v2_pos, &v3_pos);
 
-    bool should_cull = vec3_dot_prod(&cross, &v1->pos) > 0.0f;
+    bool should_cull = vec3_dot_prod(&cross, &v1_pos) > 0.0f;
 
     if (!should_cull) {
       process_triangles(p, v1, v2, v3, i / 3);

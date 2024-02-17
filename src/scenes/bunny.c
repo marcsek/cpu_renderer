@@ -1,6 +1,5 @@
 #include "../app.h"
 #include "../pipeline.h"
-#include "mat3.h"
 #include "scene.h"
 #include <MiniFB.h>
 
@@ -41,25 +40,26 @@ static void update(keyboard *kbd, double dt) {
 
 static void render() {
   pipeline_begin_frame(&pip);
+  mat4 rot_x = mat4_rotationX(rotation.x);
+  mat4 rot_y = mat4_rotationY(rotation.y);
+  mat4 rot_z = mat4_rotationZ(rotation.z);
+  mat4 rot_matrix = mat4_mult_mat4(&rot_z, &rot_y);
+  rot_matrix = mat4_mult_mat4(&rot_matrix, &rot_x);
+  mat4 translation = mat4_translation(&(vec3){.z = z_offset});
+  mat4 transformation = mat4_mult_mat4(&translation, &rot_matrix);
 
-  mat3 rot_x = mat3_rotationX(rotation.x);
-  mat3 rot_y = mat3_rotationY(rotation.y);
-  mat3 rot_z = mat3_rotationZ(rotation.z);
-  mat3 rot_matrix = mat3_mult_mat3(&rot_z, &rot_y);
-  rot_matrix = mat3_mult_mat3(&rot_matrix, &rot_x);
+  mat4 rot_c_x = mat4_rotationX(rotation_c.x);
+  mat4 rot_c_y = mat4_rotationY(rotation_c.y);
+  mat4 rot_c_z = mat4_rotationZ(rotation_c.z);
+  mat4 rot_c_matrix = mat4_mult_mat4(&rot_c_z, &rot_c_y);
+  rot_c_matrix = mat4_mult_mat4(&rot_c_matrix, &rot_c_x);
 
-  mat3 rot_c_x = mat3_rotationX(rotation_c.x);
-  mat3 rot_c_y = mat3_rotationY(rotation_c.y);
-  mat3 rot_c_z = mat3_rotationZ(rotation_c.z);
-  mat3 rot_c_matrix = mat3_mult_mat3(&rot_c_z, &rot_c_y);
-  rot_c_matrix = mat3_mult_mat3(&rot_c_matrix, &rot_c_x);
+  const vec4 light_dir4 = (vec4){light_dir.x, light_dir.y, light_dir.z, 1.0f};
+  const vec4 light_pos = mat4_mult_vec4(&rot_c_matrix, &light_dir4);
+  const vec3 light_pos3 = (vec3){light_pos.x, light_pos.y, light_pos.z};
 
-  const vec3 trans = {.z = z_offset};
-  const vec3 light_pos = mat3_mult_vec3(&rot_c_matrix, &light_dir);
-
-  pip.effect.vs.bind_rotation(&pip.effect.vs, rot_matrix);
-  pip.effect.vs.bind_translation(&pip.effect.vs, trans);
-  flat_vertex_bind_dir(pip.effect.vs.shader_data, &light_pos);
+  pip.effect.vs.bind_transformation(&pip.effect.vs, transformation);
+  flat_vertex_bind_dir(pip.effect.vs.shader_data, &light_pos3);
   pipeline_draw(&pip, &v);
 }
 

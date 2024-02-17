@@ -75,9 +75,10 @@ indexed_triangle_list itd_load(const char *file_name, vertex_create_func vcf) {
   for (int i = 0; (unsigned int)i < attrib.num_vertices * 3; i += 3) {
     vertex *new_vertex = malloc(sizeof(vertex));
 
-    *new_vertex = vcf((vec3){attrib.vertices[i], attrib.vertices[i + 1],
-                             attrib.vertices[i + 2]},
-                      NULL);
+    vec4 pos4 = (vec4){attrib.vertices[i], attrib.vertices[i + 1],
+                       attrib.vertices[i + 2], 1.0f};
+
+    *new_vertex = vcf(pos4, NULL);
     vector_push_back(tl.vertices, new_vertex);
   }
 
@@ -123,9 +124,11 @@ indexed_triangle_list itd_load_normals(const char *file_name,
 
   for (int i = 0; (unsigned int)i < attrib.num_vertices * 3; i += 3) {
     vertex *new_vertex = malloc(sizeof(vertex));
-    *new_vertex = vcf((vec3){attrib.vertices[i], attrib.vertices[i + 1],
-                             attrib.vertices[i + 2]},
-                      NULL);
+
+    vec4 pos4 = (vec4){attrib.vertices[i], attrib.vertices[i + 1],
+                       attrib.vertices[i + 2], 1.0f};
+
+    *new_vertex = vcf(pos4, NULL);
     vector_push_back(tl.vertices, new_vertex);
   }
 
@@ -142,12 +145,13 @@ indexed_triangle_list itd_load_normals(const char *file_name,
   for (int i = 0; (unsigned int)i < attrib.num_faces; i++) {
     int i0 = attrib.faces[i].vn_idx;
 
-    vec3 *normal = malloc(sizeof(vec3));
+    vec4 *normal = malloc(sizeof(vec4));
 
-    *normal = (vec3){
+    *normal = (vec4){
         .x = attrib.normals[3 * i0],
         .y = attrib.normals[3 * i0 + 1],
         .z = attrib.normals[3 * i0 + 2],
+        .w = 0.0f,
     };
 
     vertices[attrib.faces[i].v_idx]->sd = normal;

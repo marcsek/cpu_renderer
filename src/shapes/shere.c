@@ -28,14 +28,17 @@ indexed_triangle_list sphere_get_plain(float radius, int lat_div, int long_div,
       vertex *new_vertex = malloc(sizeof(vertex));
       vec3 pos = mat3_mult_vec3(&long_mat, &lat_base);
 
-      *new_vertex = vcf(pos, NULL);
+      vec4 pos4 = (vec4){.x = pos.x, .y = pos.y, .z = pos.z, .w = 1.0f};
+
+      *new_vertex = vcf(pos4, NULL);
       vector_push_back(vertices, new_vertex);
     }
   }
 
   const size_t i_north_pole = vector_get_size(vertices);
   vertex *new_vertex_n = malloc(sizeof(vertex));
-  *new_vertex_n = vcf(base, NULL);
+  vec4 base4 = (vec4){.x = base.x, .y = base.y, .z = base.z, .w = 1.0f};
+  *new_vertex_n = vcf(base4, NULL);
   vector_push_back(vertices, new_vertex_n);
 
   const size_t i_south_pole = vector_get_size(vertices);
@@ -43,7 +46,9 @@ indexed_triangle_list sphere_get_plain(float radius, int lat_div, int long_div,
 
   vec3 base_neg = vec3_copy(&base);
   vec3_mult_s(&base_neg, -1.0f);
-  *new_vertex_s = vcf(base_neg, NULL);
+  vec4 base_n4 =
+      (vec4){.x = base_neg.x, .y = base_neg.y, .z = base_neg.z, .w = 1.0f};
+  *new_vertex_s = vcf(base_n4, NULL);
   vector_push_back(vertices, new_vertex_s);
 
   vector *indices = vector_create(10);

@@ -2,6 +2,7 @@
 #define EFFECT_H
 
 #include "../triangle.h"
+#include "mat4.h"
 #include "vertex.h"
 #include <stdint.h>
 
@@ -12,8 +13,7 @@ typedef struct pixel_shader {
 
 typedef struct vertex_shader {
   vertex (*transform)(void *data, vertex *in);
-  void (*bind_translation)(struct vertex_shader *vs, const vec3 in);
-  void (*bind_rotation)(struct vertex_shader *vs, const mat3 in);
+  void (*bind_transformation)(struct vertex_shader *vs, const mat4 in);
   void *shader_data;
 } vertex_shader;
 
@@ -54,7 +54,7 @@ vertex_shader flat_vertex_create();
 void flat_vertex_bind_dir(void *data, const vec3 *dir_in);
 
 vertex_shader point_vertex_create();
-void point_vertex_bind_pos(void *data, const vec3 *dir_in);
+void point_vertex_bind_pos(void *data, const vec4 *dir_in);
 
 // Geometry shaders
 geometry_shader default_geometry_create();

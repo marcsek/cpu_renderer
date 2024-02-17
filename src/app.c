@@ -7,6 +7,7 @@
 #include "scenes/scene.h"
 #include "window.h"
 #include <MiniFB.h>
+#include <stdio.h>
 
 static window wnd;
 static renderer rn;
@@ -14,7 +15,7 @@ static renderer rn;
 // **
 #define SCENE_LEN 8
 static scene scenes[SCENE_LEN];
-size_t cur_scene = 7;
+size_t cur_scene = 0;
 bool did_cycle = false;
 // **
 
@@ -43,7 +44,7 @@ int app_init() {
   scenes[5] = pos_cube_create(&rn);
   scenes[6] = scene_bunny_create(&rn);
   scenes[7] = scene_suz_create(&rn);
-  //       **
+  //        **
 
   return 0;
 }
