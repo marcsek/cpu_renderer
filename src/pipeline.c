@@ -1,5 +1,6 @@
 #include "pipeline.h"
 #include "app.h"
+#include "clip_cull_trian.h"
 #include "mat4.h"
 #include "screen_transformer.h"
 #include "shaders/vertex.h"
@@ -97,7 +98,7 @@ static void process_triangles(pipeline *p, const vertex *v0, const vertex *v1,
   triangle trian =
       p->effect.gs.process(p->effect.gs.shader_data, v0, v1, v2, index);
 
-  post_process_tverts(p, trian);
+  clip_cull_triangle(p, &trian, post_process_tverts);
 
   vertex_free(&trian.v0);
   vertex_free(&trian.v1);

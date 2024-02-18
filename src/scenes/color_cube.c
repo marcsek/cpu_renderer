@@ -34,7 +34,7 @@ static void render() {
   pipeline_begin_frame(&pip);
 
   const mat4 proj =
-      mat4_projection(100.0f, WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 10.0f);
+      mat4_projection(100.0f, WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.5f, 10.0f);
 
   mat4 translation = mat4_translation(&(vec3){.z = z_offset});
 

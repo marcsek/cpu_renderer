@@ -1,4 +1,5 @@
 #include "triangle_rasterizer.h"
+#include "app.h"
 #include "essentials.h"
 #include "pipeline.h"
 #include "shaders/vertex.h"
@@ -97,8 +98,9 @@ static void draw_flat(renderer *rn, const vertex *v1, const vertex *v2,
   UNUSED(v2);
   vertex it_edge0 = vertex_copy(v1);
 
-  const int y_start = (int)ceil((double)(v1->pos.y - 0.5f));
-  const int y_end = (int)ceil((double)(v3->pos.y - 0.5f));
+  const int y_start = MAX((int)ceil((double)(v1->pos.y - 0.5f)), 0);
+  const int y_end =
+      MIN((int)ceil((double)(v3->pos.y - 0.5f)), WINDOW_HEIGHT - 1);
 
   vertex dv1_c = vertex_copy(dv1);
   vertex_mult(&dv1_c, ((float)y_start) + 0.5f - v1->pos.y);
@@ -111,8 +113,9 @@ static void draw_flat(renderer *rn, const vertex *v1, const vertex *v2,
   for (int y = y_start; y < y_end;
        y++, vertex_add(&it_edge0, dv1), vertex_add(&it_edge1, dv2)) {
 
-    const int x_start = (int)ceil((double)(it_edge0.pos.x - 0.5f));
-    const int x_end = (int)ceil(((double)it_edge1.pos.x - 0.5f));
+    const int x_start = MAX((int)ceil((double)(it_edge0.pos.x - 0.5f)), 0);
+    const int x_end =
+        MIN((int)ceil(((double)it_edge1.pos.x - 0.5f)), WINDOW_WIDTH - 1);
 
     vertex i_line = vertex_copy(&it_edge0);
 

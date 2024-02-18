@@ -44,7 +44,7 @@ static void update(keyboard *kbd, double dt) {
 
 static void render() {
   const mat4 proj =
-      mat4_projection(100.0f, WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 10.0f);
+      mat4_projection(100.0f, WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.5f, 10.0f);
 
   pipeline_begin_frame(&pip);
 

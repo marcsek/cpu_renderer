@@ -29,8 +29,8 @@ void z_buffer_clear(z_buffer *z) {
 }
 
 static float *at(z_buffer *z, int x, int y) {
-  assert(x > 0 && x < z->width);
-  assert(y > 0 && y < z->height);
+  assert(x >= 0 && x < z->width);
+  assert(y >= 0 && y < z->height);
   return &z->p_buffer[y * z->width + x];
 }
 
