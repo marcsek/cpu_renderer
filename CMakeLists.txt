@@ -29,3 +29,4 @@ add_executable(${PROJECT_NAME} ${SOURCES} ${SrcVendor})
 # link dependencies
 target_link_libraries(${PROJECT_NAME} minifb)
 target_link_libraries(${PROJECT_NAME} notstd)
+target_link_libraries(${PROJECT_NAME} "-lm")

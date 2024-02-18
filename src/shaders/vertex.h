@@ -3,6 +3,7 @@
 
 #include "vec4.h"
 #include <notstd.h>
+#include <stdint.h>
 
 typedef struct {
   struct vertex (*copy)(const struct vertex *v);

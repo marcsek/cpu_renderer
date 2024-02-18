@@ -2,7 +2,6 @@
 #include "../vendors/tinyobj/tinyobj_loader_c.h"
 #include "essentials.h"
 #include "helpers/debug_info.h"
-#include "vec3.h"
 #include "vector.h"
 #include <ctype.h>
 #include <stdio.h>
@@ -14,8 +13,8 @@
 // 10MB
 #define MAX_BUFFER_LENGTH 10000000
 
-static void load_file(void *ctx, const char *filename, int is_mtl,
-                      const char *obj_filename, char **buf, size_t *len) {
+static void load_file_model(void *ctx, const char *filename, int is_mtl,
+                            const char *obj_filename, char **buf, size_t *len) {
   UNUSED(is_mtl);
   UNUSED(obj_filename);
 
@@ -25,7 +24,7 @@ static void load_file(void *ctx, const char *filename, int is_mtl,
     printf("Couldn\'t open obj file. (%s)\n", filename);
   }
 
-  char buff[MAX_BUFFER_LENGTH];
+  char *buff = malloc(sizeof(char) * MAX_BUFFER_LENGTH);
   char first_line[MAX_LINE_LENGTH];
 
   fscanf(fptr, "%[^\n]", first_line);
@@ -36,7 +35,7 @@ static void load_file(void *ctx, const char *filename, int is_mtl,
     first_line[i] = tolower(first_line[i]);
   }
 
-  if (strnstr(first_line, "ccw", MAX_LINE_LENGTH) != NULL) {
+  if (strstr(first_line, "ccw") != NULL) {
     *(bool *)ctx = true;
   }
 
@@ -60,9 +59,9 @@ indexed_triangle_list itd_load(const char *file_name, vertex_create_func vcf) {
   size_t num_materials;
 
   unsigned int flags = 0;
-  const int ret =
-      tinyobj_parse_obj(&attrib, &shapes, &num_shapes, &materials,
-                        &num_materials, file_name, load_file, &isCCW, flags);
+  const int ret = tinyobj_parse_obj(&attrib, &shapes, &num_shapes, &materials,
+                                    &num_materials, file_name, load_file_model,
+                                    &isCCW, flags);
 
   if (ret != TINYOBJ_SUCCESS) {
     debug_printf("Couldn\'t parse obj file. (%s)", file_name);
@@ -110,9 +109,9 @@ indexed_triangle_list itd_load_normals(const char *file_name,
   size_t num_materials;
 
   unsigned int flags = 0;
-  const int ret =
-      tinyobj_parse_obj(&attrib, &shapes, &num_shapes, &materials,
-                        &num_materials, file_name, load_file, &isCCW, flags);
+  const int ret = tinyobj_parse_obj(&attrib, &shapes, &num_shapes, &materials,
+                                    &num_materials, file_name, load_file_model,
+                                    &isCCW, flags);
 
   if (ret != TINYOBJ_SUCCESS) {
     debug_printf("Couldn\'t parse obj file. (%s)", file_name);

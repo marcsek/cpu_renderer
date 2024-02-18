@@ -4,7 +4,6 @@
 #include "vec3.h"
 #include "vector.h"
 #include <stdlib.h>
-#include <sys/_types/_size_t.h>
 
 indexed_triangle_list plain_create_plain(int divisions, float size) {
   const int n_vertices = divisions + 1;
