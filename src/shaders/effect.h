@@ -13,7 +13,9 @@ typedef struct pixel_shader {
 
 typedef struct vertex_shader {
   vertex (*transform)(void *data, vertex *in);
-  void (*bind_transformation)(struct vertex_shader *vs, const mat4 in);
+  void (*bind_world)(struct vertex_shader *vs, const mat4 in);
+  void (*bind_proj)(struct vertex_shader *vs, const mat4 in);
+  mat4 (*get_proj)(struct vertex_shader *vs);
   void *shader_data;
 } vertex_shader;
 

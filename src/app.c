@@ -7,13 +7,12 @@
 #include "scenes/scene.h"
 #include "window.h"
 #include <MiniFB.h>
-#include <stdio.h>
 
 static window wnd;
 static renderer rn;
 
 // **
-#define SCENE_LEN 8
+#define SCENE_LEN 2
 static scene scenes[SCENE_LEN];
 size_t cur_scene = 0;
 bool did_cycle = false;
@@ -36,15 +35,15 @@ int app_init() {
   mfb_set_target_fps(TARGET_FPS);
 
   // **
-  scenes[0] = scene_flag_plane_create(&rn);
-  scenes[1] = scene_color_cube_create(&rn);
-  scenes[2] = scene_solid_face_create(&rn);
-  scenes[3] = scene_cube_skin_create(&rn);
-  scenes[4] = scene_overlap_cube_create(&rn);
-  scenes[5] = pos_cube_create(&rn);
-  scenes[6] = scene_bunny_create(&rn);
-  scenes[7] = scene_suz_create(&rn);
-  //        **
+  // scenes[0] = scene_flag_plane_create(&rn);
+  scenes[0] = scene_color_cube_create(&rn);
+  // scenes[2] = scene_solid_face_create(&rn);
+  // scenes[3] = scene_cube_skin_create(&rn);
+  // scenes[4] = scene_overlap_cube_create(&rn);
+  // scenes[5] = pos_cube_create(&rn);
+  // scenes[6] = scene_bunny_create(&rn);
+  scenes[1] = scene_suz_create(&rn);
+  //         **
 
   return 0;
 }

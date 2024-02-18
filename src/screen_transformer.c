@@ -5,14 +5,14 @@ screen_transformer st_create(float x_size, float y_size) {
 }
 
 void st_transform(screen_transformer *st, vertex *v) {
-  const float z_inv = 1.0f / v->pos.z;
+  const float w_inv = 1.0f / v->pos.w;
 
-  vertex_mult(v, z_inv);
+  vertex_mult(v, w_inv);
 
   v->pos.x = (v->pos.x + 1.0f) * st->x_size;
   v->pos.y = (-v->pos.y + 1.0f) * st->y_size;
 
-  v->pos.z = z_inv;
+  v->pos.w = w_inv;
 }
 
 vertex st_get_transformed(screen_transformer *st, const vertex *v) {

@@ -1,6 +1,5 @@
 #include "../app.h"
 #include "../pipeline.h"
-#include "mat3.h"
 #include "scene.h"
 #include <MiniFB.h>
 
@@ -44,26 +43,29 @@ static void update(keyboard *kbd, double dt) {
 }
 
 static void render() {
+  const mat4 proj =
+      mat4_projection(100.0f, WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 10.0f);
+
   pipeline_begin_frame(&pip);
+
+  mat4 translation = mat4_translation(&(vec3){.z = z_offset});
 
   mat4 rot_x = mat4_rotationX(rotation.x);
   mat4 rot_y = mat4_rotationY(rotation.y);
   mat4 rot_z = mat4_rotationZ(rotation.z);
-  mat4 rot_matrix = mat4_mult_mat4(&rot_z, &rot_y);
-  rot_matrix = mat4_mult_mat4(&rot_matrix, &rot_x);
-
-  mat4 translation = mat4_translation(&(vec3){.z = z_offset});
-  mat4 transformation = mat4_mult_mat4(&translation, &rot_matrix);
+  mat4 rot_matrix = mat4_mult_mat4(&translation, &rot_z);
+  rot_matrix = mat4_mult_mat4(&rot_y, &rot_matrix);
+  rot_matrix = mat4_mult_mat4(&rot_x, &rot_matrix);
 
   vec4 pos4 = {light_pos.x, light_pos.y, light_pos.z, 1.0f};
-  pip.effect.vs.bind_transformation(&pip.effect.vs, transformation);
+  pip.effect.vs.bind_world(&pip.effect.vs, rot_matrix);
+  pip.effect.vs.bind_proj(&pip.effect.vs, proj);
   point_vertex_bind_pos(pip.effect.vs.shader_data, &pos4);
   pipeline_draw(&pip, &v);
 
-  mat4 ident = mat4_identity();
   mat4 l_translation = mat4_translation(&light_pos);
-  mat4 l_transformation = mat4_mult_mat4(&l_translation, &ident);
-  l_pip.effect.vs.bind_transformation(&l_pip.effect.vs, l_transformation);
+  l_pip.effect.vs.bind_world(&l_pip.effect.vs, l_translation);
+  l_pip.effect.vs.bind_proj(&l_pip.effect.vs, proj);
 
   pipeline_draw(&l_pip, &l_v);
 }

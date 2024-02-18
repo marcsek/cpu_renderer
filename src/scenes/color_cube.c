@@ -5,7 +5,6 @@
 #include "scene.h"
 #include "vector.h"
 #include <MiniFB.h>
-#include <stdio.h>
 
 static pipeline pip;
 static vec3 rotation = {0.0f, 0.0f, 0.0f};
@@ -34,16 +33,23 @@ static void update(keyboard *kbd, double dt) {
 static void render() {
   pipeline_begin_frame(&pip);
 
+  const mat4 proj =
+      mat4_projection(100.0f, WINDOW_WIDTH / (float)WINDOW_HEIGHT, 1.0f, 10.0f);
+
+  mat4 translation = mat4_translation(&(vec3){.z = z_offset});
+
   mat4 rot_x = mat4_rotationX(rotation.x);
   mat4 rot_y = mat4_rotationY(rotation.y);
   mat4 rot_z = mat4_rotationZ(rotation.z);
-  mat4 rot_matrix = mat4_mult_mat4(&rot_z, &rot_y);
-  rot_matrix = mat4_mult_mat4(&rot_matrix, &rot_x);
+  mat4 rot_matrix = mat4_mult_mat4(&translation, &rot_z);
+  rot_matrix = mat4_mult_mat4(&rot_y, &rot_matrix);
+  rot_matrix = mat4_mult_mat4(&rot_x, &rot_matrix);
 
-  mat4 translation = mat4_translation(&(vec3){.z = z_offset});
-  mat4 transformation = mat4_mult_mat4(&translation, &rot_matrix);
+  // mat4 translation = mat4_translation(&(vec3){.z = z_offset});
+  // mat4 transformation = mat4_mult_mat4(&translation, &rot_matrix);
 
-  pip.effect.vs.bind_transformation(&pip.effect.vs, transformation);
+  pip.effect.vs.bind_world(&pip.effect.vs, rot_matrix);
+  pip.effect.vs.bind_proj(&pip.effect.vs, proj);
   pipeline_draw(&pip, &v);
 }
 

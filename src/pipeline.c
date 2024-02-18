@@ -1,5 +1,6 @@
 #include "pipeline.h"
 #include "app.h"
+#include "mat4.h"
 #include "screen_transformer.h"
 #include "shaders/vertex.h"
 #include "triangle_rasterizer.h"
@@ -64,6 +65,10 @@ static void assemble_triangles(pipeline *p, const vector *verts,
   vertex **data = (vertex **)vector_get_data(verts);
   int **ind_d = (int **)vector_get_data(inds);
 
+  mat4 proj = p->effect.vs.get_proj(&p->effect.vs);
+
+  const vec4 eyepos = mat4_mult_vec4(&proj, &(vec4){0.0f, 0.0f, 0.0f, 1.0f});
+
   for (size_t i = 0; i < vector_get_size(inds); i += 3) {
     vertex *v1 = data[*ind_d[i]];
     vertex *v2 = data[*ind_d[i + 1]];
@@ -76,8 +81,10 @@ static void assemble_triangles(pipeline *p, const vector *verts,
     vec3_subs(&v2_pos, &v1_pos);
     vec3_subs(&v3_pos, &v1_pos);
     vec3 cross = vec3_cross_prod(&v2_pos, &v3_pos);
+    vec3 eye_cor = (vec3){v1->pos.x, v1->pos.y, v1->pos.z};
+    vec3_subs(&eye_cor, &(vec3){eyepos.x, eyepos.y, eyepos.z});
 
-    bool should_cull = vec3_dot_prod(&cross, &v1_pos) > 0.0f;
+    bool should_cull = vec3_dot_prod(&cross, &eye_cor) > 0.0f;
 
     if (!should_cull) {
       process_triangles(p, v1, v2, v3, i / 3);
