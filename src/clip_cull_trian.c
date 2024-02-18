@@ -13,7 +13,7 @@ static void clip_1(pipeline *p, vertex *v0, vertex *v1, vertex *v2,
   const vertex v0a = vertex_interpolate_to(v0, v1, alphaA);
   const vertex v0b = vertex_interpolate_to(v0, v2, alphaB);
 
-  const vertex v0a_c = vertex_copy(&v0b);
+  const vertex v0a_c = vertex_copy(&v0a);
 
   pptv_func(p, (triangle){.v0 = v0a, .v1 = *v1, .v2 = v2_c});
   pptv_func(p, (triangle){.v0 = v0b, .v1 = v0a_c, .v2 = *v2});
